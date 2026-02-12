@@ -8,6 +8,8 @@
 Rectangle::Rectangle(double x, double y, double w, double h)
     : x(x), y(y), width(w), height(h) {}
 
+// draw
+
 void Rectangle::draw(QPainter& painter) const {
   // the outline
   QPen pen(QColor(strokeColor.c_str()));
@@ -25,6 +27,8 @@ void Rectangle::draw(QPainter& painter) const {
   painter.drawRect(QRectF(x, y, width, height));
 }
 
+// contains check
+
 bool Rectangle::contains(double mouseX, double mouseY) const {
   // find the boundaries since w and h can be negative
   double left = std::min(x, x + width);
@@ -38,6 +42,8 @@ bool Rectangle::contains(double mouseX, double mouseY) const {
 
   return insideX && insideY;
 }
+
+// SVG output as string
 
 std::string Rectangle::toSVG() const {
   return "<rect x=\"" + std::to_string(x) + "\" " + "y=\"" + std::to_string(y) +

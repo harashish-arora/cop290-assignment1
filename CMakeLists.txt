@@ -12,6 +12,7 @@ add_executable(main
     src/shapes/graphics_object.cpp
     src/shapes/rectangle.cpp
     src/gui/canvas.cpp
+    src/shapes/circle.cpp
 )
 
 target_link_libraries(main PRIVATE Qt6::Widgets)
