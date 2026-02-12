@@ -38,3 +38,11 @@ bool Rectangle::contains(double mouseX, double mouseY) const {
 
   return insideX && insideY;
 }
+
+std::string Rectangle::toSVG() const {
+  return "<rect x=\"" + std::to_string(x) + "\" " + "y=\"" + std::to_string(y) +
+         "\" " + "width=\"" + std::to_string(width) + "\" " + "height=\"" +
+         std::to_string(height) + "\" " + "stroke=\"" + strokeColor + "\" " +
+         "stroke-width=\"" + std::to_string(strokeWidth) + "\" " + "fill=\"" +
+         fillColor + "\" />";
+}
