@@ -1,30 +1,28 @@
+// freehand.h — Freehand sketch shape (polyline of points)
 #pragma once
+#include <vector>
+
 #include "shapes/graphics_object.h"
 
-class Circle : public GraphicsObject {
+class Freehand : public GraphicsObject {
  public:
-  Circle(double x, double y, double r);
-  Circle(double x, double y, double rx, double ry);
+  Freehand();
+
+  void addPoint(double x, double y);
+  const std::vector<QPointF>& getPoints() const;
 
   void draw(QPainter& painter) const override;
   std::string toSVG() const override;
   bool contains(double x, double y) const override;
-
   QRectF boundingBox() const override;
 
-  // Setters
-  void setRadius(double r);
-  void setRadii(double rx, double ry);
-  void setCenter(double x, double y);
   void moveBy(double dx, double dy) override;
-
-  // Clone (deep copy)
   std::shared_ptr<GraphicsObject> clone() const override;
-
-  // Restore from bounding box
   void setFromBoundingBox(const QRectF& box) override;
 
+  // Scale points into raw left/top/right/bottom (right<left = horizontal flip)
+  void scaleToBox(double left, double top, double right, double bottom);
+
  private:
-  double cx, cy;
-  double rx, ry;
+  std::vector<QPointF> points;
 };

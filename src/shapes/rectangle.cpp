@@ -3,52 +3,69 @@
 
 #include <algorithm>
 
-// constructor
+// Constructor
+Rectangle::Rectangle(double x, double y, double w, double h) : x(x), y(y) {
+  // We must set these in the body because they belong to the Parent class
+  this->width = w;
+  this->height = h;
+}
 
-Rectangle::Rectangle(double x, double y, double w, double h)
-    : x(x), y(y), width(w), height(h) {}
+// bounding box
+QRectF Rectangle::boundingBox() const { return QRectF(x, y, width, height); }
 
-// draw
-
+// Draw
 void Rectangle::draw(QPainter& painter) const {
-  // the outline
   QPen pen(QColor(strokeColor.c_str()));
   pen.setWidthF(strokeWidth);
   painter.setPen(pen);
 
-  // setting the fill
   if (fillColor == "none") {
     painter.setBrush(Qt::NoBrush);
   } else {
     painter.setBrush(QBrush(QColor(fillColor.c_str())));
   }
 
-  // drawing the pixels
   painter.drawRect(QRectF(x, y, width, height));
 }
 
-// contains check
-
+// Contains Check
 bool Rectangle::contains(double mouseX, double mouseY) const {
-  // find the boundaries since w and h can be negative
-  double left = std::min(x, x + width);
-  double right = std::max(x, x + width);
-  double top = std::min(y, y + height);
-  double bottom = std::max(y, y + height);
-
-  // check if the mouse is inside these boundaries
-  bool insideX = (mouseX >= left) && (mouseX <= right);
-  bool insideY = (mouseY >= top) && (mouseY <= bottom);
-
-  return insideX && insideY;
+  return boundingBox().contains(mouseX, mouseY);
 }
 
-// SVG output as string
-
+// SVG Output
 std::string Rectangle::toSVG() const {
   return "<rect x=\"" + std::to_string(x) + "\" " + "y=\"" + std::to_string(y) +
          "\" " + "width=\"" + std::to_string(width) + "\" " + "height=\"" +
-         std::to_string(height) + "\" " + "stroke=\"" + strokeColor + "\" " +
-         "stroke-width=\"" + std::to_string(strokeWidth) + "\" " + "fill=\"" +
-         fillColor + "\" />";
+         std::to_string(height) + "\" " + svgColorAttr("stroke", strokeColor) +
+         " " + "stroke-width=\"" + std::to_string(strokeWidth) + "\" " +
+         svgColorAttr("fill", fillColor) + " />";
+}
+
+// Resize (Update the parent fields)
+void Rectangle::setGeometry(double nw, double nh) {
+  width = nw;
+  height = nh;
+}
+
+// Move
+void Rectangle::moveBy(double dx, double dy) {
+  x += dx;
+  y += dy;
+}
+
+// Clone — returns an independent deep copy
+std::shared_ptr<GraphicsObject> Rectangle::clone() const {
+  auto copy = std::make_shared<Rectangle>(x, y, width, height);
+  copy->setFillColor(getFillColor());
+  copy->setStrokeColor(getStrokeColor());
+  copy->setStrokeWidth(getStrokeWidth());
+  return copy;
+}
+
+void Rectangle::setFromBoundingBox(const QRectF& box) {
+  x = box.x();
+  y = box.y();
+  width = box.width();
+  height = box.height();
 }

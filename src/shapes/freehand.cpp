@@ -1,0 +1,110 @@
+// freehand.cpp — Freehand sketch shape
+#include "shapes/freehand.h"
+
+#include <QPainterPath>
+#include <algorithm>
+#include <cmath>
+
+Freehand::Freehand() {
+  fillColor = "none";
+  strokeColor = "black";
+  strokeWidth = 1;
+}
+
+void Freehand::addPoint(double x, double y) { points.emplace_back(x, y); }
+
+const std::vector<QPointF>& Freehand::getPoints() const { return points; }
+
+void Freehand::draw(QPainter& painter) const {
+  if (points.size() < 2) return;
+  QPen pen(QColor(strokeColor.c_str()));
+  pen.setWidthF(strokeWidth);
+  pen.setCapStyle(Qt::RoundCap);
+  pen.setJoinStyle(Qt::RoundJoin);
+  painter.setPen(pen);
+  painter.setBrush(Qt::NoBrush);
+
+  QPainterPath path;
+  path.moveTo(points[0]);
+  for (size_t i = 1; i < points.size(); i++) {
+    path.lineTo(points[i]);
+  }
+  painter.drawPath(path);
+}
+
+QRectF Freehand::boundingBox() const {
+  if (points.empty()) return QRectF(0, 0, 0, 0);
+  double minX = points[0].x(), maxX = minX;
+  double minY = points[0].y(), maxY = minY;
+  for (auto& pt : points) {
+    minX = std::min(minX, pt.x());
+    maxX = std::max(maxX, pt.x());
+    minY = std::min(minY, pt.y());
+    maxY = std::max(maxY, pt.y());
+  }
+  return QRectF(minX, minY, maxX - minX, maxY - minY);
+}
+
+bool Freehand::contains(double x, double y) const {
+  // Check if (x,y) is close to any segment of the polyline
+  const double tolerance = 6.0;
+  for (size_t i = 1; i < points.size(); i++) {
+    double x1 = points[i - 1].x(), y1 = points[i - 1].y();
+    double x2 = points[i].x(), y2 = points[i].y();
+    double dx = x2 - x1, dy = y2 - y1;
+    double lenSq = dx * dx + dy * dy;
+    double t = (lenSq > 0) ? ((x - x1) * dx + (y - y1) * dy) / lenSq : 0;
+    t = std::max(0.0, std::min(1.0, t));
+    double px = x1 + t * dx, py = y1 + t * dy;
+    double dist = std::sqrt((x - px) * (x - px) + (y - py) * (y - py));
+    if (dist <= tolerance) return true;
+  }
+  return false;
+}
+
+std::string Freehand::toSVG() const {
+  if (points.empty()) return "";
+  std::string pts;
+  for (size_t i = 0; i < points.size(); i++) {
+    if (i > 0) pts += " ";
+    pts += std::to_string(points[i].x()) + "," + std::to_string(points[i].y());
+  }
+  return "<polyline data-shape=\"freehand\" points=\"" + pts + "\" " +
+         svgColorAttr("stroke", strokeColor) + " stroke-width=\"" +
+         std::to_string(strokeWidth) + "\" " + "fill=\"none\" " +
+         "stroke-linecap=\"round\" stroke-linejoin=\"round\" />";
+}
+
+void Freehand::moveBy(double dx, double dy) {
+  for (auto& pt : points) {
+    pt.setX(pt.x() + dx);
+    pt.setY(pt.y() + dy);
+  }
+}
+
+std::shared_ptr<GraphicsObject> Freehand::clone() const {
+  auto copy = std::make_shared<Freehand>();
+  copy->points = points;
+  copy->setFillColor(getFillColor());
+  copy->setStrokeColor(getStrokeColor());
+  copy->setStrokeWidth(getStrokeWidth());
+  return copy;
+}
+
+void Freehand::setFromBoundingBox(const QRectF& box) {
+  scaleToBox(box.left(), box.top(), box.right(), box.bottom());
+}
+
+void Freehand::scaleToBox(double left, double top, double right,
+                          double bottom) {
+  QRectF oldBox = boundingBox();
+  if (oldBox.width() < 1 || oldBox.height() < 1) return;
+
+  for (auto& pt : points) {
+    // Normalize to 0..1 in old box, then map to new box (may flip)
+    double tx = (pt.x() - oldBox.x()) / oldBox.width();
+    double ty = (pt.y() - oldBox.y()) / oldBox.height();
+    pt.setX(left + tx * (right - left));
+    pt.setY(top + ty * (bottom - top));
+  }
+}
