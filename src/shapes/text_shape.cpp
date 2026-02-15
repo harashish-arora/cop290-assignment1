@@ -82,8 +82,8 @@ std::string TextShape::toSVG() const {
          std::to_string(y) + "\" font-family=\"" + escapeXml(fontFamily) +
          "\" font-size=\"" + std::to_string(fontSize) +
          "\" data-highlight-fill=\"" + escapeXml(fillColor) + "\" " +
-      svgColorAttr("fill", strokeColor) + " stroke-width=\"" +
-      std::to_string(strokeWidth) + "\">" + escapeXml(text) + "</text>";
+         svgColorAttr("fill", strokeColor) + " stroke-width=\"" +
+         std::to_string(strokeWidth) + "\">" + escapeXml(text) + "</text>";
 }
 
 void TextShape::moveBy(double dx, double dy) {
