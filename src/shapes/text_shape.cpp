@@ -15,6 +15,14 @@ void TextShape::draw(QPainter& painter) const {
   QFont f(QString::fromStdString(fontFamily), fontSize);
   painter.setFont(f);
 
+  // Persistent background highlight from fill color
+  QColor bg(fillColor.c_str());
+  if (bg.isValid() && fillColor != "transparent" && fillColor != "none") {
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(bg);
+    painter.drawRect(boundingBox());
+  }
+
   QColor c(strokeColor.c_str());
   if (!c.isValid() || strokeColor == "transparent" || strokeColor == "none") {
     c = Qt::black;
