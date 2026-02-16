@@ -1,12 +1,13 @@
-// canvas cpp
-// implementation for canvas
+// canvas.cpp
+// main canvas widget implementation
 
 #include "gui/canvas.h"
 
 #include <QLineEdit>
+
 #include "tools/idle_state.h"
 
-// setup canvas widget input behavior initial state and inline text editor
+// canvas constructor sets up initial state and inline text editor
 Canvas::Canvas(QWidget* parent) : QWidget(parent) {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
@@ -19,7 +20,9 @@ Canvas::Canvas(QWidget* parent) : QWidget(parent) {
   textEditor->hide();
   textEditor->setFrame(true);
   textEditor->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  // keep typing color black use a light semi transparent blue for selection
+
+  // keep typing color black using light semi-transparent background for
+  // selection
   textEditor->setStyleSheet(
       "color: black;"
       "selection-background-color: rgba(100,150,255,140);"
@@ -34,7 +37,7 @@ Canvas::Canvas(QWidget* parent) : QWidget(parent) {
 
 Canvas::~Canvas() = default;
 
-// dispatch mouse events to current finite state machine object
+// dispatch mouse events to current fsm object
 void Canvas::mousePressEvent(QMouseEvent* e) {
   if (textEditing) finalizeTextEditing();
   currentState->handleMousePress(this, e);

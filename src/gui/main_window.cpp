@@ -1,4 +1,4 @@
-// main window cpp
+// main_window.cpp
 // this defines the top level window along with the menu bar
 
 #include "gui/main_window.h"
@@ -23,15 +23,18 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   panel = new PropertiesPanel(canvas, container);
   toolBar = new ToolBar(canvas, container);
 
+  // right column with canvas and properties panel stacked vertically
   auto* rightCol = new QVBoxLayout;
   rightCol->setContentsMargins(0, 0, 0, 0);
   rightCol->setSpacing(0);
   rightCol->addWidget(canvas, 1);
   rightCol->addWidget(panel, 0);
 
+  // main layout
   outerLayout->addLayout(rightCol, 1);
   outerLayout->addWidget(toolBar, 0);
 
+  // light background for toolbar and panel areas
   container->setStyleSheet("background: #f0f0f0;");
   setCentralWidget(container);
   setWindowTitle("ProjectInkscape");
@@ -50,8 +53,8 @@ Canvas* MainWindow::getCanvas() const { return canvas; }
 // close action with unsaved changes prompt
 void MainWindow::closeFile() {
   if (canvas->isModified()) {
-    auto choice =
-        promptUnsavedChanges(this, "You have unsaved changes. Save before closing?");
+    auto choice = promptUnsavedChanges(
+        this, "You have unsaved changes. Save before closing?");
     if (choice == UnsavedChoice::Cancel) return;
     if (choice == UnsavedChoice::Save) canvas->save();
   }

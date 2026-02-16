@@ -1,5 +1,6 @@
-// properties panel helpers cpp
-// helper functions used by the properties panel
+// properties_panel_helpers.cpp
+// helper functions for properties panel like colour swatches, slider creation,
+// and grid layout
 
 #include "gui/properties_panel_helpers.h"
 
@@ -68,7 +69,8 @@ const char* kCheckStyle =
 const char* kBoldLabel = "font-weight: 600; color: #222; font-size: 11px;";
 const char* kSectionTitle = "font-weight: 700; font-size: 12px; color: #222;";
 
-// build one color column with title preview presets and apply on click checkbox
+// build one colour column with title preview presets and apply on click
+// checkbox
 QVBoxLayout* buildColorColumn(const char* title, QPushButton*& previewOut,
                               QCheckBox*& checkOut, const QColor presets[],
                               PropertiesPanel* panel, const char* presetSlot) {

@@ -1,5 +1,5 @@
-// resizing state cpp
-// fsm state for dragging a handle to resize a shape
+// resizing_state.cpp
+// fsm state for resizing a selected shape by dragging a resize handle
 
 #include "tools/resizing_state.h"
 
@@ -62,7 +62,7 @@ void ResizingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   applyResize(canvas, pos);
 }
 
-// push one resize command if geometry changed then return to idle
+// push one resize command if geometry changed, then return to idle state
 void ResizingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
   auto& sel = canvas->getSelectedShape();

@@ -1,4 +1,4 @@
-// tool bar icons cpp
+// tool_bar_icons.cpp
 // implementation for tool bar icons
 
 #include <QPainter>
@@ -7,7 +7,7 @@
 
 #include "gui/tool_bar.h"
 
-// helper to create one checkable tool button with custom painted icon
+// helper to create checkable tool button
 static QPushButton* makeToolBtn(const QSize sz,
                                 std::function<void(QPainter&)> draw) {
   QPixmap pix(sz);
@@ -24,7 +24,7 @@ static QPushButton* makeToolBtn(const QSize sz,
   return btn;
 }
 
-// build all toolbar buttons and draw minimal vector icons
+// build all toolbar buttons and draw simple icons
 void ToolBar::createButtons(const QSize& iconSz) {
   selectBtn = makeToolBtn(iconSz, [](QPainter& p) {
     p.setPen(QPen(QColor("#555"), 1.5));

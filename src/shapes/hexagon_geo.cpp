@@ -1,9 +1,9 @@
-// hexagon geo cpp
-// implementation for hexagon geo
+// hexagon_geo.cpp
+// hexagon shape geometry and hit-testing
 
 #include "shapes/hexagon.h"
 
-// point in polygon test on computed hex points
+// compute hexagon points in local coordinates based on center and radii
 bool Hexagon::contains(double x, double y) const {
   return hexPoints().containsPoint(QPointF(x, y), Qt::OddEvenFill);
 }

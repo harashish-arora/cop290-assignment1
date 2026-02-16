@@ -1,5 +1,5 @@
-// creating state cpp
-// state for dragging to create a new shape
+// creating_state.cpp
+// state for creating a new shape by dragging on the canvas
 
 #include "tools/creating_state.h"
 
@@ -34,25 +34,30 @@ void CreatingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   if (canvas->getMode() == ShapeMode::FREEHAND) {
     auto fh = std::dynamic_pointer_cast<Freehand>(preview);
     if (fh) fh->addPoint(current.x(), current.y());
+
   } else if (canvas->getMode() == ShapeMode::CIRCLE) {
     double r = std::sqrt(std::pow(current.x() - start.x(), 2) +
                          std::pow(current.y() - start.y(), 2));
     auto circle = std::dynamic_pointer_cast<Circle>(preview);
     if (circle) circle->setRadius(r);
+
   } else if (canvas->getMode() == ShapeMode::HEXAGON) {
     double dx = std::abs(current.x() - start.x());
     double dy = std::abs(current.y() - start.y());
     auto hex = std::dynamic_pointer_cast<Hexagon>(preview);
     if (hex) hex->setRadii(dx, dy);
+
   } else if (canvas->getMode() == ShapeMode::LINE) {
     auto line = std::dynamic_pointer_cast<Line>(preview);
     if (line)
       line->setEndpoints(start.x(), start.y(), current.x(), current.y());
+
   } else if (canvas->getMode() == ShapeMode::ROUNDED_RECT) {
     double w = current.x() - start.x();
     double h = current.y() - start.y();
     auto rr = std::dynamic_pointer_cast<RoundedRectangle>(preview);
     if (rr) rr->setGeometry(w, h);
+
   } else {
     double w = current.x() - start.x();
     double h = current.y() - start.y();
@@ -64,7 +69,7 @@ void CreatingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
 }
 
 // commit preview to shape list and push add command when size is valid
-// then return to idle state
+// after that, return to idle state
 void CreatingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
 

@@ -1,5 +1,6 @@
-// svg parser cpp
-// reads an svg file and returns a vector of graphicsobjects
+// svg_parser.cpp
+// reads an svg file and returns a vector of objects representing the shapes in
+// the svg
 
 #include "parse/svg_parser.h"
 
@@ -10,7 +11,7 @@
 
 namespace SvgParser {
 
-// load parses svg text and builds shape objects for supported tags
+// main entry point for loading an svg file, returns vector of shapes
 std::vector<std::shared_ptr<GraphicsObject>> load(const std::string& filePath) {
   std::ifstream file(filePath);
   if (!file.is_open()) return {};
@@ -58,4 +59,4 @@ std::vector<std::shared_ptr<GraphicsObject>> load(const std::string& filePath) {
   return shapes;
 }
 
-}  // namespace svgparser
+}  // namespace SvgParser

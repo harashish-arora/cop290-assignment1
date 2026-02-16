@@ -1,5 +1,5 @@
-// command cpp
-// command pattern for undo redo
+// command.cpp
+// implementation of undoable commands for shape manipulation
 
 #include "tools/command.h"
 
@@ -14,7 +14,7 @@ Command::~Command() = default;
 AddShapeCommand::AddShapeCommand(std::shared_ptr<GraphicsObject> s)
     : shape(std::move(s)) {}
 
-// redo add shape by appending it again
+// redo add shape by pushing it to the canvas shape list and selecting it
 void AddShapeCommand::redo(Canvas* c) {
   c->getShapes().push_back(shape);
   c->setSelectedShape(shape);

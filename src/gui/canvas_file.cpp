@@ -2,6 +2,7 @@
 // file handling for canvas - new/open/save/save as with unsaved changes prompt
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <fstream>
 
 #include "gui/canvas.h"
@@ -41,11 +42,23 @@ void Canvas::saveAs() {
 // open svg file and replace document contents
 // reset undo/redo stacks and update saved snapshot
 void Canvas::openFile() {
+  static bool shownSvgLimitNote = false;
+  if (!shownSvgLimitNote) {
+    QMessageBox::information(
+        this, "limited svg support",
+        "this editor reads a restricted svg subset and is most reliable with svg files saved by this app");
+    shownSvgLimitNote = true;
+  }
   QString path = QFileDialog::getOpenFileName(this, "Open SVG", QString(),
                                               "SVG Files (*.svg)");
   if (path.isEmpty()) return;
   auto loaded = SvgParser::load(path.toStdString());
-  if (loaded.empty()) return;
+  if (loaded.empty()) {
+    QMessageBox::warning(
+        this, "open failed",
+        "could not parse this svg with current subset support try an svg saved by this app");
+    return;
+  }
   shapes.clear();
   undoStack.clear();
   redoStack.clear();

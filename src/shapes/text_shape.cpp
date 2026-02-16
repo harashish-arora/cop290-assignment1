@@ -1,5 +1,5 @@
-// text shape cpp
-// textshape represents a single line text object with font properties
+// text_shape.cpp
+// text shape class definition
 
 #include "shapes/text_shape.h"
 
@@ -15,12 +15,13 @@ TextShape::TextShape(double x, double y, const std::string& text)
   strokeWidth = 1.0;
 }
 
-// draw text background highlight then glyph path using stroke color
+// render text using QPainter, convert to SVG <text> element, and hit test
 void TextShape::draw(QPainter& painter) const {
   QFont f(QString::fromStdString(fontFamily), fontSize);
   painter.setFont(f);
 
-  // persistent background highlight from fill color
+  // draw highlight rectangle behind text if fill color is not none or
+  // transparent
   QColor bg(fillColor.c_str());
   if (bg.isValid() && fillColor != "transparent" && fillColor != "none") {
     painter.setPen(Qt::NoPen);
@@ -48,7 +49,7 @@ void TextShape::draw(QPainter& painter) const {
   }
 }
 
-// compute text bounding box from current font metrics
+// compute bounding box based on font metrics and text content
 QRectF TextShape::boundingBox() const {
   QFont f(QString::fromStdString(fontFamily), fontSize);
   QFontMetricsF fm(f);

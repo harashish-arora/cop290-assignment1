@@ -1,5 +1,6 @@
-// main window menus cpp
-// implementation for main window menus
+// main_window_menus.cpp
+// implementation for main window menus to build menu structure and connect
+// actions to canvas slots
 
 #include <QMenuBar>
 

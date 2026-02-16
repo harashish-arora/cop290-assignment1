@@ -1,4 +1,4 @@
-// graphics object cpp
+// graphics_object.cpp
 // base class for drawable shapes
 
 #include "shapes/graphics_object.h"
@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <sstream>
 
-// constructor
+// constructor for graphics object with default style and zero size
 GraphicsObject::GraphicsObject()
     : width(0),
       height(0),
@@ -17,19 +17,19 @@ GraphicsObject::GraphicsObject()
 
 GraphicsObject::~GraphicsObject() = default;
 
-// strokecolor
+// stroke colour accessors
 void GraphicsObject::setStrokeColor(const std::string& color) {
   strokeColor = color;
 }
 std::string GraphicsObject::getStrokeColor() const { return strokeColor; }
 
-// fillcolor
+// fill colour accessors
 void GraphicsObject::setFillColor(const std::string& color) {
   fillColor = color;
 }
 std::string GraphicsObject::getFillColor() const { return fillColor; }
 
-// strokewidth
+// stroke width accessors
 void GraphicsObject::setStrokeWidth(double w) { strokeWidth = w; }
 double GraphicsObject::getStrokeWidth() const { return strokeWidth; }
 
@@ -49,7 +49,8 @@ std::string GraphicsObject::svgColorAttr(const std::string& prefix,
   QColor c(color.c_str());
   if (!c.isValid()) return prefix + "=\"" + color + "\"";
 
-  // build rrggbb no alpha
+  // build rrggbb with no opacity if fully opaque, otherwise add separate
+  // opacity attribute
   std::ostringstream oss;
   oss << prefix << "=\"" << c.name(QColor::HexRgb).toStdString() << "\"";
 

@@ -1,18 +1,18 @@
-// text shape ops cpp
-// implementation for text shape ops
+// text_shape_ops.cpp
+// text shape operations for move, clone and resize by bounding box
 
 #include <QFont>
 #include <QFontMetricsF>
 
 #include "shapes/text_shape.h"
 
-// translate text anchor position
+// translate text position by offset
 void TextShape::moveBy(double dx, double dy) {
   x += dx;
   y += dy;
 }
 
-// clone text with content font and style
+// deep copy text shape with geometry, text and font for clipboard and commands
 std::shared_ptr<GraphicsObject> TextShape::clone() const {
   auto copy = std::make_shared<TextShape>(x, y, text);
   copy->fontFamily = fontFamily;
@@ -47,4 +47,5 @@ void TextShape::setFontSize(int size) {
   if (size > 200) size = 200;
   fontSize = size;
 }
+
 int TextShape::getFontSize() const { return fontSize; }

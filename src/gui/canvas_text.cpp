@@ -1,5 +1,6 @@
-// canvas text cpp
-// implementation for canvas text
+// canvas_text.cpp
+// text editing logic for canvas - double click to edit, inline editor, and
+// command creation for undo/redo
 
 #include <QLineEdit>
 #include <algorithm>
@@ -9,8 +10,9 @@
 #include "tools/command.h"
 #include "tools/shape_property_command.h"
 
-// finish inline text editing and create proper undo command
-// draft text uses add shape command while existing text uses property command
+// start text editing by showing an inline editor and caching original text
+// if editing a new text shape created by double click, use a draft shape to
+// track whether the shape was committed or discarded
 void Canvas::finalizeTextEditing() {
   if (!textEditing) return;
   auto txt = std::dynamic_pointer_cast<TextShape>(selectedShape);

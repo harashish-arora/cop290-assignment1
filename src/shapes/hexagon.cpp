@@ -1,4 +1,4 @@
-// hexagon cpp
+// hexagon.cpp
 // regular hexagon shape fits inside a bounding box
 
 #include "shapes/hexagon.h"
@@ -18,7 +18,8 @@ Hexagon::Hexagon(double cx, double cy, double rx, double ry)
 // compute polygon points with optional pointy top angular offset
 QPolygonF Hexagon::hexPoints() const {
   QPolygonF poly;
-  double offset = pointyTop ? (PI / 6.0) : 0.0;  // 30 offset for pointy top
+  double offset =
+      pointyTop ? (PI / 6.0) : 0.0;  // 30 degree offset for pointy top
   for (int i = 0; i < 6; i++) {
     double angle = PI / 180.0 * (60.0 * i) + offset;
     poly << QPointF(cx + rx * std::cos(angle), cy + ry * std::sin(angle));
@@ -47,7 +48,7 @@ void Hexagon::draw(QPainter& painter) const {
 
 // serialize shape as svg polygon with custom hexagon metadata
 std::string Hexagon::toSVG() const {
-  // svg polygon points x1,y1 x2,y2
+  // svg polygon points x1, y1 and x2, y2
   QPolygonF pts = hexPoints();
   std::string pointsStr;
   for (int i = 0; i < pts.size(); i++) {

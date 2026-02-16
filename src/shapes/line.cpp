@@ -1,4 +1,4 @@
-// line cpp
+// line.cpp
 // line segment shape defined by two endpoints
 
 #include "shapes/line.h"
@@ -7,14 +7,14 @@
 #include <cmath>
 #include <string>
 
-// construct line from two endpoints and cache width height
+// construct line from two endpoints and cache width and height
 Line::Line(double x1, double y1, double x2, double y2)
     : x1(x1), y1(y1), x2(x2), y2(y2) {
   width = std::abs(x2 - x1);
   height = std::abs(y2 - y1);
 }
 
-// draw line using stroke properties
+// draw line using stroke properties, no fill
 void Line::draw(QPainter& painter) const {
   QPen pen(QColor(strokeColor.c_str()));
   pen.setWidthF(strokeWidth);
@@ -34,6 +34,7 @@ std::string Line::toSVG() const {
 // hit test by measuring distance to line segment
 bool Line::contains(double mx, double my) const {
   // distance from point mx, my to the line segment x1,y1 x2,y2
+  // checks closeness to endpoints and projection onto segment for hit testing
   double dx = x2 - x1;
   double dy = y2 - y1;
   double lenSq = dx * dx + dy * dy;
@@ -86,10 +87,10 @@ std::shared_ptr<GraphicsObject> Line::clone() const {
   return copy;
 }
 
-// map endpoints proportionally into a new bounding box
+// map endpoints proportionally to the new bounding box
 // used by resize command replay
 void Line::setFromBoundingBox(const QRectF& box) {
-  // map endpoints proportionally from current bounding box to new box
+  // map endpoints from current bounding box to new box
   QRectF cur = boundingBox();
   double sx = (cur.width() > 1e-6) ? box.width() / cur.width() : 1.0;
   double sy = (cur.height() > 1e-6) ? box.height() / cur.height() : 1.0;

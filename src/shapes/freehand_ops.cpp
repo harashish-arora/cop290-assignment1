@@ -1,9 +1,10 @@
-// freehand ops cpp
-// implementation for freehand ops
+// freehand_ops.cpp
+// operations for freehand shape, including move, clone and resize by bounding
+// box
 
 #include "shapes/freehand.h"
 
-// translate each point by dx dy
+// translate every point by the given offset
 void Freehand::moveBy(double dx, double dy) {
   for (auto& pt : points) {
     pt.setX(pt.x() + dx);
@@ -21,7 +22,7 @@ std::shared_ptr<GraphicsObject> Freehand::clone() const {
   return copy;
 }
 
-// restore geometry by scaling points into provided box
+// restore geometry by scaling points to new bounding box
 void Freehand::setFromBoundingBox(const QRectF& box) {
   scaleToBox(box.left(), box.top(), box.right(), box.bottom());
 }

@@ -1,5 +1,5 @@
-// properties panel connect cpp
-// implementation for properties panel connect
+// properties_panel_connect.cpp
+// connects properties panel controls to apply logic and slider session helpers
 
 #include <QFontComboBox>
 #include <QPushButton>
@@ -8,7 +8,6 @@
 
 #include "gui/properties_panel.h"
 
-// connect all ui controls to apply logic and slider session helpers
 void PropertiesPanel::connectSignals() {
   // fill opacity
   connect(fillAlphaSlider, &QSlider::valueChanged, fillAlphaSpin,

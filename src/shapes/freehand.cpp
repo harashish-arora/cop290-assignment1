@@ -1,4 +1,4 @@
-// freehand cpp
+// freehand.cpp
 // freehand polyline shape sequence of points
 
 #include "shapes/freehand.h"
@@ -7,20 +7,21 @@
 #include <algorithm>
 #include <cmath>
 
-// default freehand style is no fill black stroke width one
+// default freehand style is no fill, black stroke, width one
 Freehand::Freehand() {
   fillColor = "none";
   strokeColor = "black";
   strokeWidth = 1;
 }
 
-// append one sampled point to the polyline
+// append sampled point to the polyline
 void Freehand::addPoint(double x, double y) { points.emplace_back(x, y); }
 
-// return immutable point list for drawing and resize logic
+// return points for drawing and resize logic
 const std::vector<QPointF>& Freehand::getPoints() const { return points; }
 
 // draw polyline path when at least two points exist
+// to prevent single clicks
 void Freehand::draw(QPainter& painter) const {
   if (points.size() < 2) return;
   QPen pen(QColor(strokeColor.c_str()));
@@ -70,7 +71,7 @@ bool Freehand::contains(double x, double y) const {
   return false;
 }
 
-// serialize polyline with freehand marker attribute
+// toSVG polyline with freehand marker attribute
 std::string Freehand::toSVG() const {
   if (points.empty()) return "";
   std::string pts;

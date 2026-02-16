@@ -1,5 +1,5 @@
-// shape style defaults cpp
-// default fill stroke presets for new shapes
+// shape_style_defaults.cpp
+// global defaults for shape styles and convenience functions to apply them
 
 #include "tools/shape_style_defaults.h"
 
@@ -8,8 +8,8 @@
 namespace {
 // global defaults used by properties panel and shape creation flow
 CreationDefaults gCreationDefaults{"#80ffffff", "#ff000000", "transparent", 1.0,
-                                  10.0, false, "Arial", 16};
-}
+                                   10.0,        false,       "Arial",       16};
+}  // namespace
 
 // return current defaults snapshot
 CreationDefaults getCreationDefaults() { return gCreationDefaults; }
@@ -18,7 +18,8 @@ CreationDefaults getCreationDefaults() { return gCreationDefaults; }
 void setCreationDefaults(const CreationDefaults& defaults) {
   gCreationDefaults = defaults;
   if (gCreationDefaults.strokeWidth < 1.0) gCreationDefaults.strokeWidth = 1.0;
-  if (gCreationDefaults.cornerRadius < 0.0) gCreationDefaults.cornerRadius = 0.0;
+  if (gCreationDefaults.cornerRadius < 0.0)
+    gCreationDefaults.cornerRadius = 0.0;
   if (gCreationDefaults.fontSize < 1) gCreationDefaults.fontSize = 1;
 }
 

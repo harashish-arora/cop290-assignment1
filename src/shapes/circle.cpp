@@ -1,4 +1,4 @@
-// circle cpp
+// circle.cpp
 // circle shape class definition
 
 #include "shapes/circle.h"
@@ -6,13 +6,13 @@
 #include <cmath>
 #include <string>
 
-// constructor for regular circle stores equal radii
+// constructor for regular circle stores equal radii on initialisation
 Circle::Circle(double x, double y, double r) : cx(x), cy(y), rx(r), ry(r) {
   this->width = 2 * rx;
   this->height = 2 * ry;
 }
 
-// constructor for ellipse with independent radii
+// constructor for ellipse with independent radii on resizing
 Circle::Circle(double x, double y, double rx, double ry)
     : cx(x), cy(y), rx(rx), ry(ry) {
   this->width = 2 * rx;
@@ -94,7 +94,7 @@ std::shared_ptr<GraphicsObject> Circle::clone() const {
   return copy;
 }
 
-// rebuild geometry from bounding box for resize undo redo
+// rebuild geometry from bounding box for resize, undo, redo
 void Circle::setFromBoundingBox(const QRectF& box) {
   cx = box.center().x();
   cy = box.center().y();

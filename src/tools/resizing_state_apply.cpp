@@ -1,5 +1,5 @@
-// resizing state apply cpp
-// implementation for resizing state apply
+// resizing_state_apply.cpp
+// implementation for applying resize handle drags to shape geometry updates
 
 #include <algorithm>
 #include <cmath>
@@ -66,6 +66,7 @@ void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
     rect->setGeometry(newW, newH);
   }
 
+  // rounded rect is resized by moving top-left corner and setting new geometry
   auto rr = std::dynamic_pointer_cast<RoundedRectangle>(selected);
   if (rr) {
     QRectF box = selected->boundingBox();
@@ -73,6 +74,7 @@ void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
     rr->setGeometry(newW, newH);
   }
 
+  // circle is resized by moving center and setting new radii
   auto circle = std::dynamic_pointer_cast<Circle>(selected);
   if (circle) {
     circle->setCenter(newX + newW / 2.0, newY + newH / 2.0);

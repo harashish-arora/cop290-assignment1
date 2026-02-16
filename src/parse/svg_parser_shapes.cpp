@@ -1,5 +1,7 @@
-// svg parser shapes cpp
-// implementation for svg parser shapes
+// svg_parser_shapes.cpp
+// implementation for parsing SVG shapes into GraphicsObjects
+// implementations of the freehand and polygon are parsed when
+// they contain the tags
 
 #include <sstream>
 
@@ -14,7 +16,7 @@
 
 namespace SvgParser {
 
-// apply common fill stroke and stroke width attributes to a shape
+// apply common style attributes like fill, stroke and stroke-width to a shape
 static void applyStyle(const std::shared_ptr<GraphicsObject>& s,
                        const AttrMap& a) {
   s->setFillColor(rebuildColor(a, "fill"));
@@ -22,7 +24,8 @@ static void applyStyle(const std::shared_ptr<GraphicsObject>& s,
   s->setStrokeWidth(num(a, "stroke-width", 1.0));
 }
 
-// parse rect and route to rectangle or rounded rectangle based on rx ry
+// parses a rect tag, creating either a Rectangle or RoundedRectangle
+// depending on presence of rx/ry attributes, and applies styles
 void parseRect(const AttrMap& a, ShapeVec& out) {
   double x = num(a, "x"), y = num(a, "y");
   double w = num(a, "width"), h = num(a, "height");
@@ -78,7 +81,7 @@ void parseText(const AttrMap& a, const std::string& raw, ShapeVec& out) {
   out.push_back(s);
 }
 
-// parse polyline only when tagged as freehand
+// parse polyline when tagged as freehand
 void parsePolyline(const AttrMap& a, ShapeVec& out) {
   if (str(a, "data-shape") != "freehand") return;
   auto fh = std::make_shared<Freehand>();
@@ -96,7 +99,7 @@ void parsePolyline(const AttrMap& a, ShapeVec& out) {
   out.push_back(fh);
 }
 
-// parse polygon only when tagged as hexagon
+// parse polygon when tagged as hexagon
 void parsePolygon(const AttrMap& a, ShapeVec& out) {
   if (str(a, "data-shape") != "hexagon") return;
   auto h = std::make_shared<Hexagon>(num(a, "data-cx"), num(a, "data-cy"),
@@ -108,4 +111,4 @@ void parsePolygon(const AttrMap& a, ShapeVec& out) {
   out.push_back(h);
 }
 
-}  // namespace svgparser
+}  // namespace SvgParser

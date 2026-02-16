@@ -1,5 +1,5 @@
-// shape property command cpp
-// captures the properties of a shape relevant to the properties panel
+// shape_property_command.cpp
+// implementation of undo command for shape property changes
 
 #include "tools/shape_property_command.h"
 
@@ -8,16 +8,15 @@
 #include "shapes/rounded_rectangle.h"
 #include "shapes/text_shape.h"
 
-// compare full property snapshots to detect real changes
+// compare full property snapshots to detect changes
 bool ShapePropertyState::operator==(const ShapePropertyState& other) const {
   return fillColor == other.fillColor && strokeColor == other.strokeColor &&
          strokeWidth == other.strokeWidth &&
          hasCornerRadius == other.hasCornerRadius &&
          cornerRadius == other.cornerRadius &&
          hasPointyTop == other.hasPointyTop && pointyTop == other.pointyTop &&
-         hasTextStyle == other.hasTextStyle &&
-         fontFamily == other.fontFamily && fontSize == other.fontSize &&
-         hasTextContent == other.hasTextContent &&
+         hasTextStyle == other.hasTextStyle && fontFamily == other.fontFamily &&
+         fontSize == other.fontSize && hasTextContent == other.hasTextContent &&
          textContent == other.textContent;
 }
 
@@ -26,10 +25,12 @@ bool ShapePropertyState::operator!=(const ShapePropertyState& other) const {
 }
 
 // store shape pointer and before after snapshots
-ShapePropertyCommand::ShapePropertyCommand(std::shared_ptr<GraphicsObject> shape,
-                                           ShapePropertyState before,
-                                           ShapePropertyState after)
-    : shape(std::move(shape)), before(std::move(before)), after(std::move(after)) {}
+ShapePropertyCommand::ShapePropertyCommand(
+    std::shared_ptr<GraphicsObject> shape, ShapePropertyState before,
+    ShapePropertyState after)
+    : shape(std::move(shape)),
+      before(std::move(before)),
+      after(std::move(after)) {}
 
 // apply one snapshot to shape
 // guarded by has fields for shape specific properties

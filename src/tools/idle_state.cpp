@@ -1,5 +1,5 @@
-// idle state cpp
-// fsm state for when nothing is being dragged
+// idle_state.cpp
+// fsm state for idle selection mode where user can select move resize and start
 
 #include "tools/idle_state.h"
 
@@ -15,7 +15,8 @@
 void startShapeCreation(Canvas* canvas, QPointF click);
 
 // handle press in idle state
-// this decides if user is resizing moving editing text or creating a new shape
+// this decides if user is resizing, moving, editing text, or creating a new
+// shape
 void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
   QPointF click = event->position();
@@ -23,7 +24,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
   canvas->setLastMousePos(click);
   auto& selected = canvas->getSelectedShape();
   if (selected) {
-    // clicking a handle switches to resizing state
+    // check if click is on a resize handle of the selected shape
     HandleType handle = getHandleAt(click, selected);
     if (handle != HandleType::NONE) {
       QRectF box = selected->boundingBox();
@@ -37,7 +38,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
     }
   }
 
-  // clicking a shape switches to moving state
+  // if not resizing, check if click is on a selected shape for moving
   auto& shapes = canvas->getShapes();
   for (auto it = shapes.rbegin(); it != shapes.rend(); ++it) {
     if ((*it)->contains(click.x(), click.y())) {

@@ -1,5 +1,5 @@
-// tool bar cpp
-// minimal toolbar that hosts tool buttons select, rectangle, circle
+// tool_bar.cpp
+// implementation for the toolbar widget with shape mode buttons and icons
 
 #include "gui/tool_bar.h"
 

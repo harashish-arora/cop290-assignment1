@@ -1,5 +1,5 @@
-// moving state cpp
-// fsm state for dragging to move a selected shape
+// moving_state.cpp
+// fsm state for moving a selected shape by dragging on the canvas
 
 #include "tools/moving_state.h"
 

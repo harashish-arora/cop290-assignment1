@@ -1,4 +1,4 @@
-// rounded rectangle cpp
+// rounded_rectangle.cpp
 // rectangle with rounded corners
 
 #include "shapes/rounded_rectangle.h"
@@ -58,13 +58,13 @@ void RoundedRectangle::setGeometry(double nw, double nh) {
   height = nh;
 }
 
-// keep uniform corner radius in x and y
+// keep same corner radius in x and y
 void RoundedRectangle::setCornerRadius(double r) {
   rx = r;
   ry = r;
 }
 
-// return active corner radius for panel sync
+// return active corner radius to sync with panel
 double RoundedRectangle::getCornerRadius() const { return rx; }
 
 // translate top left point
@@ -73,7 +73,7 @@ void RoundedRectangle::moveBy(double dx, double dy) {
   y += dy;
 }
 
-// clone with style values copied
+// deep copy with style and geometry
 std::shared_ptr<GraphicsObject> RoundedRectangle::clone() const {
   auto copy = std::make_shared<RoundedRectangle>(x, y, width, height, rx, ry);
   copy->setFillColor(getFillColor());
@@ -82,7 +82,7 @@ std::shared_ptr<GraphicsObject> RoundedRectangle::clone() const {
   return copy;
 }
 
-// restore geometry from undo redo bounding box
+// restore geometry from undo, redo, and bounding box
 void RoundedRectangle::setFromBoundingBox(const QRectF& box) {
   x = box.x();
   y = box.y();

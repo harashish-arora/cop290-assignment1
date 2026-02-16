@@ -1,20 +1,20 @@
-// canvas paint cpp
-// implementation for canvas paint
-
-#include "gui/canvas.h"
+// canvas_paint.cpp
+// paint event implementation for canvas
 
 #include <QPainter>
 #include <QPainterPath>
 #include <cmath>
 
+#include "gui/canvas.h"
 #include "shapes/freehand.h"
 #include "shapes/hexagon.h"
 #include "shapes/line.h"
+#include "shapes/rounded_rectangle.h"
 #include "shapes/text_shape.h"
 #include "tools/handle_helpers.h"
 
-// paint flow
-// draw committed shapes first then draw preview while creating then selection handles
+// paint event draws all shapes and selection handles
+// also draws preview shape with dashed outline if needed
 void Canvas::paintEvent(QPaintEvent*) {
   QPainter painter(this);
   painter.fillRect(rect(), Qt::white);
@@ -28,19 +28,24 @@ void Canvas::paintEvent(QPaintEvent*) {
   }
 
   if (previewShape) {
-    // preview uses dashed outline so user can see shape being created
+    // preview uses dashed outline and no fill
     QPen dash(Qt::black, 1, Qt::DashLine);
     painter.setPen(dash);
     painter.setBrush(Qt::NoBrush);
     QRectF box = previewShape->boundingBox();
+
+    // draw preview shape based on current mode with correct geometry
     if (getMode() == ShapeMode::CIRCLE) {
       painter.drawEllipse(box);
+
     } else if (getMode() == ShapeMode::HEXAGON) {
       auto* hex = dynamic_cast<Hexagon*>(previewShape.get());
       QPolygonF poly;
       double cx = box.center().x(), cy = box.center().y();
       double rx = box.width() / 2.0, ry = box.height() / 2.0;
-      double offset = (hex && hex->isPointyTop()) ? (3.14159265358979 / 6.0) : 0.0;
+      double offset =
+
+          (hex && hex->isPointyTop()) ? (3.14159265358979 / 6.0) : 0.0;
       for (int i = 0; i < 6; i++) {
         double a = 3.14159265358979 / 180.0 * (60.0 * i) + offset;
         poly << QPointF(cx + rx * std::cos(a), cy + ry * std::sin(a));
@@ -61,11 +66,16 @@ void Canvas::paintEvent(QPaintEvent*) {
         painter.drawPath(path);
       }
     } else if (getMode() == ShapeMode::ROUNDED_RECT) {
-      painter.drawRoundedRect(box, 10, 10);
+      auto* rr = dynamic_cast<RoundedRectangle*>(previewShape.get());
+      double r = rr ? rr->getCornerRadius() : 10.0;
+      painter.drawRoundedRect(box, r, r);
     } else {
       painter.drawRect(box);
     }
   }
 
-  if (selectedShape && !textEditing) drawSelectionHandles(painter, selectedShape);
+  // draw selection handles if a shape is selected and not currently editing
+  // text
+  if (selectedShape && !textEditing)
+    drawSelectionHandles(painter, selectedShape);
 }

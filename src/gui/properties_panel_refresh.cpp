@@ -1,4 +1,4 @@
-// properties panel refresh cpp
+// properties_panel_refresh.cpp
 // refresh controls from currently selected shape
 
 #include <QCheckBox>
@@ -28,7 +28,8 @@ void PropertiesPanel::refreshFromSelection() {
       auto before = captureShapeState(shape);
       auto after = before;
       if (fillApplyCheck->isChecked())
-        after.fillColor = getEffectiveFill().name(QColor::HexArgb).toStdString();
+        after.fillColor =
+            getEffectiveFill().name(QColor::HexArgb).toStdString();
       if (strokeApplyCheck->isChecked()) {
         after.strokeColor =
             getEffectiveStroke().name(QColor::HexArgb).toStdString();
@@ -60,7 +61,8 @@ void PropertiesPanel::refreshFromSelection() {
       pointyTopBtn->setChecked(state.pointyTop);
     }
     if (state.hasTextStyle) {
-      fontCombo->setCurrentFont(QFont(QString::fromStdString(state.fontFamily)));
+      fontCombo->setCurrentFont(
+          QFont(QString::fromStdString(state.fontFamily)));
       fontSizeSpin->setValue(state.fontSize);
     }
   }

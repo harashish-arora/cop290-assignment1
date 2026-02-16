@@ -1,5 +1,5 @@
-// properties panel dialogs cpp
-// implementation for properties panel dialogs
+// properties_panel_dialogs.cpp
+// implementation for properties panel dialogs like colour picker and presets
 
 #include <QColorDialog>
 #include <QPushButton>

@@ -1,10 +1,10 @@
-// properties panel cpp
-// fill stroke properties editor with colour picker
+// properties_panel.cpp
+// fill/stroke properties editor with colour picker
 
 #include "gui/properties_panel.h"
 
-#include <QFrame>
 #include <QFontComboBox>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSlider>
@@ -14,13 +14,14 @@
 #include "gui/properties_panel_helpers.h"
 #include "tools/shape_style_defaults.h"
 
-// create panel ui sections initialize defaults and wire signals
+// create panel ui sections, initialize defaults, and wire signals
 PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
     : QWidget(parent), canvas(canvas) {
   auto* mainRow = new QHBoxLayout(this);
   mainRow->setContentsMargins(10, 4, 10, 4);
   mainRow->setSpacing(10);
 
+  // basic stylesheet for panel and child widgets
   setStyleSheet(R"(
     PropertiesPanel {
       background: #ebebeb;
@@ -71,14 +72,14 @@ PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
   setFixedHeight(120);
 }
 
-// compose fill color using rgb from picker and alpha from slider
+// compose fill color using rgb from picker and opacity from slider
 QColor PropertiesPanel::getEffectiveFill() const {
   QColor c = fillRgb_;
   c.setAlpha(fillAlphaSlider->value());
   return c;
 }
 
-// compose stroke color using rgb from picker and alpha from slider
+// compose stroke color using rgb from picker and opacity from slider
 QColor PropertiesPanel::getEffectiveStroke() const {
   QColor c = strokeRgb_;
   c.setAlpha(strokeAlphaSlider->value());
@@ -98,7 +99,7 @@ void PropertiesPanel::syncCreationDefaults() {
   setCreationDefaults(d);
 }
 
-// refresh small color preview buttons
+// refresh color preview buttons
 void PropertiesPanel::updatePreviews() {
   fillPreview->setStyleSheet(previewBtnStyle(getEffectiveFill()));
   strokePreview->setStyleSheet(previewBtnStyle(getEffectiveStroke()));

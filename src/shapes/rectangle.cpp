@@ -1,4 +1,4 @@
-// rectangle cpp
+// rectangle.cpp
 // rectangle shape class definition
 
 #include "shapes/rectangle.h"
@@ -67,6 +67,7 @@ std::shared_ptr<GraphicsObject> Rectangle::clone() const {
   return copy;
 }
 
+// restore geometry from axis aligned bounding box
 void Rectangle::setFromBoundingBox(const QRectF& box) {
   x = box.x();
   y = box.y();

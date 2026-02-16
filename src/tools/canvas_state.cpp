@@ -1,5 +1,6 @@
-// canvas state cpp
-// abstract base for all canvas interaction states
+// canvas_state.cpp
+// abstract base class for canvas interaction states like idle, drawing and
+// dragging
 
 #include "tools/canvas_state.h"
 
