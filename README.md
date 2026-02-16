@@ -152,23 +152,11 @@ All canvas modifications (create, delete, move, resize, property changes) are en
 
 ### Modular Code Organization
 
-The codebase enforces a strict limit of **under 100 lines per file** to maintain readability and single-responsibility principles. Complex classes are split across multiple files (e.g., `canvas.cpp`, `canvas_paint.cpp`, `canvas_file.cpp`), with each file handling a focused subset of functionality.
-
-### SVG as Native Format
-
-SVG was chosen as the file format for its:
-- **Openness**: Text-based, human-readable XML
-- **Interoperability**: Widely supported across tools and browsers
-- **Scalability**: Vector format preserves quality at any resolution
-- **Extensibility**: Easy to extend with custom attributes for application-specific data
+Complex classes are split across multiple files (e.g., `canvas.cpp`, `canvas_paint.cpp`, `canvas_file.cpp`), with each file handling a focused subset of functionality.
 
 ### Shape Hierarchy with Polymorphism
 
 All shapes inherit from the `GraphicsObject` abstract base class, which defines a uniform interface for rendering (`paint()`), hit testing (`contains()`), bounds calculation (`getBounds()`), and serialization. This allows the canvas to treat all shapes uniformly while each shape implements its specific geometry and rendering logic.
-
-### Qt Signal-Slot Architecture
-
-The application leverages Qt's signal-slot mechanism for loose coupling between components. For example, toolbar selections emit signals that the canvas connects to, and property panel changes trigger signals that update the canvas state. This implements the Observer pattern without manual dependency management.
 
 ## Usage
 
