@@ -10,6 +10,7 @@
 #include "tools/shape_style_defaults.h"
 
 void startShapeCreation(Canvas* canvas, QPointF click) {
+  auto defaults = getCreationDefaults();
   if (canvas->getMode() == ShapeMode::CIRCLE) {
     auto circle = std::make_shared<Circle>(click.x(), click.y(), 0);
     applyDefaultShapeStyle(circle);
@@ -17,6 +18,7 @@ void startShapeCreation(Canvas* canvas, QPointF click) {
   } else if (canvas->getMode() == ShapeMode::HEXAGON) {
     auto hex = std::make_shared<Hexagon>(click.x(), click.y(), 0, 0);
     applyDefaultShapeStyle(hex);
+    hex->setPointyTop(defaults.hexPointyTop);
     canvas->setPreviewShape(hex);
   } else if (canvas->getMode() == ShapeMode::LINE) {
     auto line =
@@ -26,9 +28,11 @@ void startShapeCreation(Canvas* canvas, QPointF click) {
   } else if (canvas->getMode() == ShapeMode::ROUNDED_RECT) {
     auto rr = std::make_shared<RoundedRectangle>(click.x(), click.y(), 0, 0);
     applyDefaultShapeStyle(rr);
+    rr->setCornerRadius(defaults.cornerRadius);
     canvas->setPreviewShape(rr);
   } else if (canvas->getMode() == ShapeMode::FREEHAND) {
     auto fh = std::make_shared<Freehand>();
+    applyDefaultLineStyle(fh);
     fh->addPoint(click.x(), click.y());
     canvas->setPreviewShape(fh);
   } else {
@@ -36,6 +40,7 @@ void startShapeCreation(Canvas* canvas, QPointF click) {
     applyDefaultShapeStyle(rect);
     canvas->setPreviewShape(rect);
   }
+
   canvas->setState(std::make_unique<CreatingState>());
   canvas->update();
 }

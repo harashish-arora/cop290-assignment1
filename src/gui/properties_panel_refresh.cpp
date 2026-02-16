@@ -61,12 +61,14 @@ void PropertiesPanel::refreshFromSelection() {
   }
 
   updatePreviews();
+  syncCreationDefaults();
   updating = false;
 }
 
 void PropertiesPanel::applyToShape() {
   if (updating) return;
   updatePreviews();
+  syncCreationDefaults();
   auto shape = canvas->getSelectedShape();
   if (!shape) return;
 

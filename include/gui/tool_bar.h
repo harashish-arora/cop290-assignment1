@@ -7,8 +7,6 @@ class Canvas;
 
 class ToolBar : public QWidget {
   Q_OBJECT
- public:
-  explicit ToolBar(Canvas* canvas, QWidget* parent = nullptr);
 
  private:
   Canvas* canvas;
@@ -22,4 +20,7 @@ class ToolBar : public QWidget {
   QPushButton* textBtn;
   void updateHighlight();
   void createButtons(const QSize& iconSz);
+
+ public:
+  explicit ToolBar(Canvas* canvas, QWidget* parent = nullptr);
 };

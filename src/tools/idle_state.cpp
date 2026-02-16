@@ -46,7 +46,10 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
 
   if (canvas->getMode() == ShapeMode::TEXT) {
     auto txt = std::make_shared<TextShape>(click.x(), click.y(), "");
+    auto defaults = getCreationDefaults();
     applyDefaultShapeStyle(txt);
+    txt->setFontFamily(defaults.fontFamily);
+    txt->setFontSize(defaults.fontSize);
     canvas->getShapes().push_back(txt);
     canvas->setSelectedShape(txt);
     canvas->setTextDraftShape(txt);

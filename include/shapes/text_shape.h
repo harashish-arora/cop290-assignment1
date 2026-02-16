@@ -5,6 +5,15 @@
 #include "shapes/graphics_object.h"
 
 class TextShape : public GraphicsObject {
+ private:
+  static std::string escapeXml(const std::string& s);
+
+  double x;
+  double y;  // baseline y
+  std::string text;
+  std::string fontFamily = "Arial";
+  int fontSize = 16;
+
  public:
   TextShape(double x, double y, const std::string& text = "");
 
@@ -25,13 +34,4 @@ class TextShape : public GraphicsObject {
 
   void setFontSize(int size);
   int getFontSize() const;
-
- private:
-  static std::string escapeXml(const std::string& s);
-
-  double x;
-  double y;  // baseline y
-  std::string text;
-  std::string fontFamily = "Arial";
-  int fontSize = 16;
 };

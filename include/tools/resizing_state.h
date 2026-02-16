@@ -7,6 +7,19 @@
 #include "tools/handle_helpers.h"
 
 class ResizingState : public CanvasState {
+ private:
+  HandleType activeHandle;
+
+  // The 4 edges saved at drag start — only the dragged ones change
+  double anchorLeft, anchorTop, anchorRight, anchorBottom;
+
+  // Original bounding box for undo
+  QRectF oldBox;
+
+  // Snapshot of freehand points at drag start
+  std::vector<QPointF> origFreehandPts;
+  QRectF origFreehandBox;
+
  public:
   ResizingState(HandleType handle, double left, double top, double right,
                 double bottom);
@@ -20,17 +33,4 @@ class ResizingState : public CanvasState {
 
   // Apply non-line resize (defined in resizing_state_apply.cpp)
   void applyResize(Canvas* canvas, QPointF pos);
-
- private:
-  HandleType activeHandle;
-
-  // The 4 edges saved at drag start — only the dragged ones change
-  double anchorLeft, anchorTop, anchorRight, anchorBottom;
-
-  // Original bounding box for undo
-  QRectF oldBox;
-
-  // Snapshot of freehand points at drag start
-  std::vector<QPointF> origFreehandPts;
-  QRectF origFreehandBox;
 };

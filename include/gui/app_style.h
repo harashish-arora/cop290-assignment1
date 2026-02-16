@@ -1,4 +1,5 @@
-// app_style.h — Global application stylesheet
+// app_style.h
+// global application stylesheet
 #pragma once
 #include <QString>
 

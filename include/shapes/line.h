@@ -3,6 +3,9 @@
 #include "shapes/graphics_object.h"
 
 class Line : public GraphicsObject {
+ private:
+  double x1, y1, x2, y2;
+
  public:
   Line(double x1, double y1, double x2, double y2);
 
@@ -20,7 +23,4 @@ class Line : public GraphicsObject {
   void moveBy(double dx, double dy) override;
   std::shared_ptr<GraphicsObject> clone() const override;
   void setFromBoundingBox(const QRectF& box) override;
-
- private:
-  double x1, y1, x2, y2;
 };

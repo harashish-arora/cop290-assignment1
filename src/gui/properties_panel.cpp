@@ -2,12 +2,15 @@
 #include "gui/properties_panel.h"
 
 #include <QFrame>
+#include <QFontComboBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSlider>
+#include <QSpinBox>
 
 #include "gui/canvas.h"
 #include "gui/properties_panel_helpers.h"
+#include "tools/shape_style_defaults.h"
 
 PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
     : QWidget(parent), canvas(canvas) {
@@ -50,6 +53,17 @@ PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
   mainRow->addWidget(vSep());
 
   setupGrid(mainRow);
+  QColor defaultFill(QString::fromStdString(defaultShapeFillColor()));
+  fillRgb_ = QColor(defaultFill.red(), defaultFill.green(), defaultFill.blue());
+  fillAlphaSlider->setValue(defaultFill.alpha());
+
+  QColor defaultStroke(QString::fromStdString(defaultShapeStrokeColor()));
+  strokeRgb_ =
+      QColor(defaultStroke.red(), defaultStroke.green(), defaultStroke.blue());
+  strokeAlphaSlider->setValue(defaultStroke.alpha());
+  updatePreviews();
+  syncCreationDefaults();
+
   connectSignals();
   setFixedHeight(120);
 }
@@ -64,6 +78,19 @@ QColor PropertiesPanel::getEffectiveStroke() const {
   c.setAlpha(strokeAlphaSlider->value());
   return c;
 }
+
+void PropertiesPanel::syncCreationDefaults() {
+  auto d = getCreationDefaults();
+  d.fillColor = getEffectiveFill().name(QColor::HexArgb).toStdString();
+  d.strokeColor = getEffectiveStroke().name(QColor::HexArgb).toStdString();
+  d.strokeWidth = widthSlider->value();
+  d.cornerRadius = cornerSlider->value();
+  d.hexPointyTop = pointyTopBtn->isChecked();
+  d.fontFamily = fontCombo->currentFont().family().toStdString();
+  d.fontSize = fontSizeSpin->value();
+  setCreationDefaults(d);
+}
+
 void PropertiesPanel::updatePreviews() {
   fillPreview->setStyleSheet(previewBtnStyle(getEffectiveFill()));
   strokePreview->setStyleSheet(previewBtnStyle(getEffectiveStroke()));

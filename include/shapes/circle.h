@@ -2,6 +2,10 @@
 #include "shapes/graphics_object.h"
 
 class Circle : public GraphicsObject {
+ private:
+  double cx, cy;
+  double rx, ry;
+
  public:
   Circle(double x, double y, double r);
   Circle(double x, double y, double rx, double ry);
@@ -23,8 +27,4 @@ class Circle : public GraphicsObject {
 
   // Restore from bounding box
   void setFromBoundingBox(const QRectF& box) override;
-
- private:
-  double cx, cy;
-  double rx, ry;
 };

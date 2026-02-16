@@ -12,6 +12,12 @@ class GraphicsObject {
   std::string fillColor;
   std::string strokeColor;
 
+  // Convert a stored color string to SVG attributes.
+  // Handles #AARRGGBB → attr="#RRGGBB" attr-opacity="0..1"
+  // and "transparent" → attr="none"
+  static std::string svgColorAttr(const std::string& prefix,
+                                  const std::string& color);
+
  public:
   // destructor
   // virtual means to go to the actual object functions, and not just remain at
@@ -52,11 +58,4 @@ class GraphicsObject {
   void setSize(double w, double h);
   double getWidth() const;
   double getHeight() const;
-
- protected:
-  // Convert a stored color string to SVG attributes.
-  // Handles #AARRGGBB → attr="#RRGGBB" attr-opacity="0..1"
-  // and "transparent" → attr="none"
-  static std::string svgColorAttr(const std::string& prefix,
-                                  const std::string& color);
 };

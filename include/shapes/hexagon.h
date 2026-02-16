@@ -3,6 +3,11 @@
 #include "shapes/graphics_object.h"
 
 class Hexagon : public GraphicsObject {
+ private:
+  double cx, cy, rx, ry;
+  bool pointyTop = false;  // false = flat-top, true = pointy-top
+  QPolygonF hexPoints() const;
+
  public:
   // cx, cy = center; rx, ry = half-width, half-height of bounding box
   Hexagon(double cx, double cy, double rx, double ry);
@@ -20,9 +25,4 @@ class Hexagon : public GraphicsObject {
 
   bool isPointyTop() const;
   void setPointyTop(bool pt);
-
- private:
-  double cx, cy, rx, ry;
-  bool pointyTop = false;  // false = flat-top, true = pointy-top
-  QPolygonF hexPoints() const;
 };

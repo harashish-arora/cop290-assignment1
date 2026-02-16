@@ -72,6 +72,7 @@ class PropertiesPanel : public QWidget {
                              const ShapePropertyState& after);
   void beginSliderInteraction();
   void endSliderInteraction();
+  void syncCreationDefaults();
   void updatePreviews();
   void setupGrid(QHBoxLayout* mainRow);
   void connectSignals();

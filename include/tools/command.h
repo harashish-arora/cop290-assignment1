@@ -16,6 +16,7 @@ class Command {
 
 // Adding a shape (create / paste)
 class AddShapeCommand : public Command {
+ private:
   std::shared_ptr<GraphicsObject> shape;
 
  public:
@@ -26,6 +27,7 @@ class AddShapeCommand : public Command {
 
 // Removing a shape (delete / cut)
 class RemoveShapeCommand : public Command {
+ private:
   std::shared_ptr<GraphicsObject> shape;
 
  public:
@@ -36,6 +38,7 @@ class RemoveShapeCommand : public Command {
 
 // Moving a shape by (dx, dy)
 class MoveCommand : public Command {
+ private:
   std::shared_ptr<GraphicsObject> shape;
   double dx, dy;
 
@@ -47,6 +50,7 @@ class MoveCommand : public Command {
 
 // Resizing a shape (stores old and new bounding boxes)
 class ResizeCommand : public Command {
+ private:
   std::shared_ptr<GraphicsObject> shape;
   QRectF oldBox, newBox;
 
@@ -59,6 +63,7 @@ class ResizeCommand : public Command {
 
 // Clearing all shapes (undoable)
 class ClearAllCommand : public Command {
+ private:
   std::vector<std::shared_ptr<GraphicsObject>> saved;
   std::shared_ptr<GraphicsObject> savedSelection;
 

@@ -85,6 +85,7 @@ void Canvas::beginTextEditing(bool selectAll) {
     textEditor->setCursorPosition(textEditor->text().size());
   }
 }
+
 void Canvas::endTextEditing() {
   textEditing = false;
   if (textEditor) textEditor->hide();

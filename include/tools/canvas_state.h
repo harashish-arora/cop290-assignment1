@@ -1,4 +1,5 @@
-// canvas_state.h — Abstract base for all canvas interaction states
+// canvas_state.h — Abstract base for all canvas interaction states. Hello World
+// how are you doing today?
 #pragma once
 #include <QKeyEvent>
 #include <QMouseEvent>

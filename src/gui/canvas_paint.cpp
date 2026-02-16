@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "shapes/freehand.h"
+#include "shapes/hexagon.h"
 #include "shapes/line.h"
 #include "shapes/text_shape.h"
 #include "tools/handle_helpers.h"
@@ -30,11 +31,13 @@ void Canvas::paintEvent(QPaintEvent*) {
     if (getMode() == ShapeMode::CIRCLE) {
       painter.drawEllipse(box);
     } else if (getMode() == ShapeMode::HEXAGON) {
+      auto* hex = dynamic_cast<Hexagon*>(previewShape.get());
       QPolygonF poly;
       double cx = box.center().x(), cy = box.center().y();
       double rx = box.width() / 2.0, ry = box.height() / 2.0;
+      double offset = (hex && hex->isPointyTop()) ? (3.14159265358979 / 6.0) : 0.0;
       for (int i = 0; i < 6; i++) {
-        double a = 3.14159265358979 / 180.0 * (60.0 * i);
+        double a = 3.14159265358979 / 180.0 * (60.0 * i) + offset;
         poly << QPointF(cx + rx * std::cos(a), cy + ry * std::sin(a));
       }
       painter.drawPolygon(poly);

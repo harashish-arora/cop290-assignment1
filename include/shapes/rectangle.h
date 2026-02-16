@@ -3,6 +3,12 @@
 #include "shapes/graphics_object.h"
 
 class Rectangle : public GraphicsObject {
+ private:
+  double x;
+  double y;
+  // width and height are deleted because for the specific case of rectangle, it
+  // will inherit its height and width directly from the parent
+
  public:
   // Constructor
   Rectangle(double x, double y, double w, double h);
@@ -24,10 +30,4 @@ class Rectangle : public GraphicsObject {
 
   // Restore from bounding box
   void setFromBoundingBox(const QRectF& box) override;
-
- private:
-  double x;
-  double y;
-  // width and height are deleted because for the specific case of rectangle, it
-  // will inherit its height and width directly from the parent
 };

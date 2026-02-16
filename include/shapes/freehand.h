@@ -5,6 +5,9 @@
 #include "shapes/graphics_object.h"
 
 class Freehand : public GraphicsObject {
+ private:
+  std::vector<QPointF> points;
+
  public:
   Freehand();
 
@@ -22,7 +25,4 @@ class Freehand : public GraphicsObject {
 
   // Scale points into raw left/top/right/bottom (right<left = horizontal flip)
   void scaleToBox(double left, double top, double right, double bottom);
-
- private:
-  std::vector<QPointF> points;
 };

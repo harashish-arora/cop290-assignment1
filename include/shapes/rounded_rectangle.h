@@ -3,6 +3,10 @@
 #include "shapes/graphics_object.h"
 
 class RoundedRectangle : public GraphicsObject {
+ private:
+  double x, y;
+  double rx, ry;  // corner radii
+
  public:
   RoundedRectangle(double x, double y, double w, double h, double rx = 10,
                    double ry = 10);
@@ -18,8 +22,4 @@ class RoundedRectangle : public GraphicsObject {
   void moveBy(double dx, double dy) override;
   std::shared_ptr<GraphicsObject> clone() const override;
   void setFromBoundingBox(const QRectF& box) override;
-
- private:
-  double x, y;
-  double rx, ry;  // corner radii
 };

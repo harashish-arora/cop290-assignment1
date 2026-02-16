@@ -17,6 +17,8 @@ QRectF Rectangle::boundingBox() const { return QRectF(x, y, width, height); }
 void Rectangle::draw(QPainter& painter) const {
   QPen pen(QColor(strokeColor.c_str()));
   pen.setWidthF(strokeWidth);
+  pen.setJoinStyle(Qt::MiterJoin);
+  pen.setMiterLimit(10.0);
   painter.setPen(pen);
 
   if (fillColor == "none") {

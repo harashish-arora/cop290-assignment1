@@ -1,4 +1,4 @@
-// shape_property_command.h — Undoable shape property snapshots
+// shape_property_command.h
 #pragma once
 
 #include <memory>
@@ -25,6 +25,7 @@ struct ShapePropertyState {
 };
 
 class ShapePropertyCommand : public Command {
+ private:
   std::shared_ptr<GraphicsObject> shape;
   ShapePropertyState before;
   ShapePropertyState after;
