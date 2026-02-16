@@ -1,5 +1,8 @@
 // canvas_events.cpp — Double-click, key press, text editing input
+#include <QFont>
+#include <QLineEdit>
 #include <algorithm>
+#include <cmath>
 
 #include "gui/canvas.h"
 #include "shapes/text_shape.h"
@@ -12,7 +15,7 @@ void Canvas::mouseDoubleClickEvent(QMouseEvent* e) {
     auto txt = std::dynamic_pointer_cast<TextShape>(*it);
     if (txt && txt->contains(click.x(), click.y())) {
       setSelectedShape(*it);
-      textEditing = true;
+      beginTextEditing(true);
       update();
       return;
     }
@@ -20,34 +23,9 @@ void Canvas::mouseDoubleClickEvent(QMouseEvent* e) {
 }
 
 void Canvas::keyPressEvent(QKeyEvent* e) {
-  if (textEditing) {
-    auto txt = std::dynamic_pointer_cast<TextShape>(selectedShape);
-    if (!txt) {
-      textEditing = false;
-      return;
-    }
-    if (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter) {
-      finalizeTextEditing();
-      update();
-      return;
-    }
-    if (e->key() == Qt::Key_Escape) {
-      finalizeTextEditing();
-      update();
-      return;
-    }
-    if (e->key() == Qt::Key_Backspace) {
-      std::string s = txt->getText();
-      if (!s.empty()) s.pop_back();
-      txt->setText(s);
-      update();
-      return;
-    }
-    QString input = e->text();
-    if (!input.isEmpty() && input.at(0).unicode() >= 32) {
-      txt->setText(txt->getText() + input.toStdString());
-      update();
-    }
+  if (textEditing && e->key() == Qt::Key_Escape) {
+    finalizeTextEditing();
+    setFocus();
     return;
   }
   currentState->handleKeyPress(this, e);
@@ -76,8 +54,41 @@ void Canvas::setPreviewShape(std::shared_ptr<GraphicsObject> shape) {
 
 ShapeMode Canvas::getMode() const { return currentMode; }
 void Canvas::setMode(ShapeMode mode) { currentMode = mode; }
-void Canvas::beginTextEditing() { textEditing = true; }
-void Canvas::endTextEditing() { textEditing = false; }
+void Canvas::beginTextEditing(bool selectAll) {
+  auto txt = std::dynamic_pointer_cast<TextShape>(selectedShape);
+  if (!txt || !textEditor) {
+    textEditing = false;
+    return;
+  }
+
+  textEditing = true;
+  textBeforeEditing = txt->getText();
+
+  QFont font(QString::fromStdString(txt->getFontFamily()), txt->getFontSize());
+  textEditor->setFont(font);
+  textEditor->setText(QString::fromStdString(txt->getText()));
+
+  QRectF box = txt->boundingBox();
+  int x = static_cast<int>(std::floor(box.x())) - 2;
+  int y = static_cast<int>(std::floor(box.y())) - 2;
+  int w = std::max(120, static_cast<int>(std::ceil(box.width())) + 12);
+  int h = std::max(24, static_cast<int>(std::ceil(box.height())) + 8);
+  textEditor->setGeometry(x, y, w, h);
+
+  textEditor->show();
+  textEditor->raise();
+  textEditor->setFocus();
+
+  if (selectAll) {
+    textEditor->selectAll();
+  } else {
+    textEditor->setCursorPosition(textEditor->text().size());
+  }
+}
+void Canvas::endTextEditing() {
+  textEditing = false;
+  if (textEditor) textEditor->hide();
+}
 void Canvas::setTextDraftShape(std::shared_ptr<GraphicsObject> shape) {
   textDraftShape = std::move(shape);
 }

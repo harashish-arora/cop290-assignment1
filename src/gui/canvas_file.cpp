@@ -19,8 +19,9 @@ void Canvas::save() {
        << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
   for (const auto& shape : shapes) file << "  " << shape->toSVG() << "\n";
   file << "</svg>\n";
-  dirty = false;
-  emit modifiedChanged();
+  savedStateId = currentStateId;
+  savedXml = computeDocumentXml();
+  syncModifiedState();
 }
 
 void Canvas::saveAs() {
@@ -40,11 +41,15 @@ void Canvas::openFile() {
   shapes.clear();
   undoStack.clear();
   redoStack.clear();
+  currentStateId = 0;
+  savedStateId = 0;
+  nextStateId = 1;
   setSelectedShape(nullptr);
   shapes = std::move(loaded);
   currentFilePath = path;
-  dirty = false;
-  emit modifiedChanged();
+  // record saved XML after loading file
+  savedXml = computeDocumentXml();
+  syncModifiedState();
   update();
 }
 
@@ -66,11 +71,14 @@ void Canvas::newFile() {
   shapes.clear();
   undoStack.clear();
   redoStack.clear();
+  currentStateId = 0;
+  savedStateId = 0;
+  nextStateId = 1;
   setSelectedShape(nullptr);
   previewShape = nullptr;
   clipboard = nullptr;
   currentFilePath.clear();
-  dirty = false;
-  emit modifiedChanged();
+  savedXml = computeDocumentXml();
+  syncModifiedState();
   update();
 }

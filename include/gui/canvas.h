@@ -11,8 +11,16 @@
 #include "tools/canvas_state.h"
 #include "tools/command.h"
 
+class QLineEdit;
+
 class Canvas : public QWidget {
   Q_OBJECT
+
+  struct HistoryEntry {
+    std::unique_ptr<Command> command;
+    int prevStateId = 0;
+    int nextStateId = 0;
+  };
 
  public:
   explicit Canvas(QWidget* parent = nullptr);
@@ -29,7 +37,7 @@ class Canvas : public QWidget {
 
   ShapeMode getMode() const;
   void setMode(ShapeMode mode);
-  void beginTextEditing();
+  void beginTextEditing(bool selectAll = false);
   void endTextEditing();
   void setTextDraftShape(std::shared_ptr<GraphicsObject> shape);
 
@@ -80,13 +88,22 @@ class Canvas : public QWidget {
   std::unique_ptr<CanvasState> currentState;
   std::shared_ptr<GraphicsObject> clipboard = nullptr;
 
-  std::vector<std::unique_ptr<Command>> undoStack;
-  std::vector<std::unique_ptr<Command>> redoStack;
+  std::vector<HistoryEntry> undoStack;
+  std::vector<HistoryEntry> redoStack;
 
   QString currentFilePath;
   bool dirty = false;
+  int currentStateId = 0;
+  int savedStateId = 0;
+  int nextStateId = 1;
   bool textEditing = false;
+  QLineEdit* textEditor = nullptr;
+  std::string textBeforeEditing;
+  QString savedXml;
+
+  QString computeDocumentXml() const;
   std::shared_ptr<GraphicsObject> textDraftShape = nullptr;
 
   void finalizeTextEditing();
+  void syncModifiedState();
 };

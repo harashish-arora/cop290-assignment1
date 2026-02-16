@@ -9,9 +9,9 @@
 GraphicsObject::GraphicsObject()
     : width(0),
       height(0),
-      strokeColor("black"),
+      strokeWidth(1.0),
       fillColor("green"),
-      strokeWidth(1.0) {}
+      strokeColor("black") {}
 
 // strokeColor
 void GraphicsObject::setStrokeColor(const std::string& color) {

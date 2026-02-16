@@ -67,3 +67,17 @@ class ClearAllCommand : public Command {
   void undo(Canvas* canvas) override;
   void redo(Canvas* canvas) override;
 };
+
+// Generic lambda-based command: undo and redo are arbitrary callbacks
+#include <functional>
+class LambdaCommand : public Command {
+ public:
+  LambdaCommand(std::function<void(Canvas*)> undoFn,
+                std::function<void(Canvas*)> redoFn);
+  void undo(Canvas* canvas) override;
+  void redo(Canvas* canvas) override;
+
+ private:
+  std::function<void(Canvas*)> undoFn_;
+  std::function<void(Canvas*)> redoFn_;
+};

@@ -87,3 +87,16 @@ void ClearAllCommand::undo(Canvas* c) {
   c->setSelectedShape(savedSelection);
   c->update();
 }
+
+// --- LambdaCommand ---
+LambdaCommand::LambdaCommand(std::function<void(Canvas*)> undoFn,
+                             std::function<void(Canvas*)> redoFn)
+    : undoFn_(std::move(undoFn)), redoFn_(std::move(redoFn)) {}
+
+void LambdaCommand::undo(Canvas* c) {
+  if (undoFn_) undoFn_(c);
+}
+
+void LambdaCommand::redo(Canvas* c) {
+  if (redoFn_) redoFn_(c);
+}

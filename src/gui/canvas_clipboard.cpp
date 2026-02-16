@@ -1,4 +1,7 @@
-// canvas_clipboard.cpp — Cut/copy/paste, delete, undo/redo, text finalize
+// canvas_clipboard.cpp
+// cut, copy, paste, delete operations and undo/redo
+#include <QDebug>
+#include <QLineEdit>
 #include <algorithm>
 
 #include "gui/canvas.h"
@@ -8,7 +11,8 @@
 void Canvas::finalizeTextEditing() {
   if (!textEditing) return;
   auto txt = std::dynamic_pointer_cast<TextShape>(selectedShape);
-  textEditing = false;
+  if (txt && textEditor) txt->setText(textEditor->text().toStdString());
+  endTextEditing();
   if (!txt) {
     textDraftShape = nullptr;
     return;
@@ -24,6 +28,15 @@ void Canvas::finalizeTextEditing() {
     }
     textDraftShape = nullptr;
   }
+
+  update();
+}
+
+QString Canvas::computeDocumentXml() const {
+  QString data;
+  data.reserve(shapes.size() * 32);
+  for (const auto& s : shapes) data += QString::fromStdString(s->toSVG());
+  return data;
 }
 
 void Canvas::deleteSelected() {
@@ -58,12 +71,14 @@ void Canvas::pasteAtCursor() {
 }
 
 void Canvas::pushCommand(std::unique_ptr<Command> cmd) {
-  undoStack.push_back(std::move(cmd));
+  HistoryEntry entry;
+  entry.command = std::move(cmd);
+  entry.prevStateId = currentStateId;
+  entry.nextStateId = nextStateId++;
+  undoStack.push_back(std::move(entry));
   redoStack.clear();
-  if (!dirty) {
-    dirty = true;
-    emit modifiedChanged();
-  }
+  currentStateId = undoStack.back().nextStateId;
+  syncModifiedState();
 }
 
 bool Canvas::isModified() const { return dirty; }
@@ -71,18 +86,54 @@ QString Canvas::getFilePath() const { return currentFilePath; }
 
 void Canvas::undo() {
   if (undoStack.empty()) return;
-  auto cmd = std::move(undoStack.back());
+  auto entry = std::move(undoStack.back());
   undoStack.pop_back();
-  cmd->undo(this);
-  redoStack.push_back(std::move(cmd));
+  // debug: print command kind
+  {
+    auto* cmd = entry.command.get();
+    if (dynamic_cast<AddShapeCommand*>(cmd))
+      qDebug() << "Undo: AddShapeCommand";
+    else if (dynamic_cast<RemoveShapeCommand*>(cmd))
+      qDebug() << "Undo: RemoveShapeCommand";
+    else if (dynamic_cast<LambdaCommand*>(cmd))
+      qDebug() << "Undo: LambdaCommand";
+    else
+      qDebug() << "Undo: <unknown command>";
+  }
+  entry.command->undo(this);
+  currentStateId = entry.prevStateId;
+  redoStack.push_back(std::move(entry));
+  syncModifiedState();
 }
 
 void Canvas::redo() {
   if (redoStack.empty()) return;
-  auto cmd = std::move(redoStack.back());
+  auto entry = std::move(redoStack.back());
   redoStack.pop_back();
-  cmd->redo(this);
-  undoStack.push_back(std::move(cmd));
+  // debug: print command kind
+  {
+    auto* cmd = entry.command.get();
+    if (dynamic_cast<AddShapeCommand*>(cmd))
+      qDebug() << "Redo: AddShapeCommand";
+    else if (dynamic_cast<RemoveShapeCommand*>(cmd))
+      qDebug() << "Redo: RemoveShapeCommand";
+    else if (dynamic_cast<LambdaCommand*>(cmd))
+      qDebug() << "Redo: LambdaCommand";
+    else
+      qDebug() << "Redo: <unknown command>";
+  }
+  entry.command->redo(this);
+  currentStateId = entry.nextStateId;
+  undoStack.push_back(std::move(entry));
+  syncModifiedState();
+}
+
+void Canvas::syncModifiedState() {
+  QString cur = computeDocumentXml();
+  bool modifiedNow = (cur != savedXml);
+  if (dirty == modifiedNow) return;
+  dirty = modifiedNow;
+  emit modifiedChanged();
 }
 
 void Canvas::clearAll() {

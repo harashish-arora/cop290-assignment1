@@ -1,12 +1,14 @@
 // canvas.cpp — Core: constructor, paint, mouse/key event dispatch
 #include "gui/canvas.h"
 
+#include <QLineEdit>
 #include <QPainter>
 #include <QPainterPath>
 #include <cmath>
 
 #include "shapes/freehand.h"
 #include "shapes/line.h"
+#include "shapes/text_shape.h"
 #include "tools/handle_helpers.h"
 #include "tools/idle_state.h"
 
@@ -17,13 +19,38 @@ Canvas::Canvas(QWidget* parent) : QWidget(parent) {
   setMouseTracking(true);
   currentState = std::make_unique<IdleState>();
   textEditing = false;
+
+  textEditor = new QLineEdit(this);
+  textEditor->hide();
+  textEditor->setFrame(true);
+  textEditor->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+  // Keep typing color black; use a light semi-transparent blue for selection
+  textEditor->setStyleSheet(
+      "color: black;"
+      "selection-background-color: rgba(100,150,255,140);"
+      "selection-color: black;"
+      "background: rgba(0,0,0,20);");
+
+  connect(textEditor, &QLineEdit::returnPressed, this,
+          [this]() { finalizeTextEditing(); });
+  connect(textEditor, &QLineEdit::editingFinished, this,
+          [this]() { finalizeTextEditing(); });
 }
 
 void Canvas::paintEvent(QPaintEvent*) {
   QPainter painter(this);
   painter.fillRect(rect(), Qt::white);
   painter.setRenderHint(QPainter::Antialiasing);
-  for (const auto& shape : shapes) shape->draw(painter);
+  for (const auto& shape : shapes) {
+    // If we're editing text, don't draw the underlying TextShape that is
+    // being edited — the QLineEdit will render the live text to avoid
+    // double-render/ghosting.
+    if (textEditing) {
+      auto txt = std::dynamic_pointer_cast<TextShape>(shape);
+      if (txt && selectedShape && shape == selectedShape) continue;
+    }
+    shape->draw(painter);
+  }
 
   if (previewShape) {
     QPen dash(Qt::black, 1, Qt::DashLine);
@@ -65,7 +92,7 @@ void Canvas::paintEvent(QPaintEvent*) {
     }
   }
 
-  if (selectedShape) {
+  if (selectedShape && !textEditing) {
     drawSelectionHandles(painter, selectedShape);
   }
 }

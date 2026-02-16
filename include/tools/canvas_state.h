@@ -13,5 +13,5 @@ class CanvasState {
   virtual void handleMousePress(Canvas* canvas, QMouseEvent* event) = 0;
   virtual void handleMouseMove(Canvas* canvas, QMouseEvent* event) = 0;
   virtual void handleMouseRelease(Canvas* canvas, QMouseEvent* event) = 0;
-  virtual void handleKeyPress(Canvas* canvas, QKeyEvent* event) {}
+  virtual void handleKeyPress(Canvas*, QKeyEvent*) {}
 };
