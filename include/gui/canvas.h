@@ -50,6 +50,7 @@ class Canvas : public QWidget {
 
   bool isModified() const;
   QString getFilePath() const;
+  bool isHistoryReplayInProgress() const;
 
  signals:
   void selectionChanged();
@@ -96,6 +97,7 @@ class Canvas : public QWidget {
   int currentStateId = 0;
   int savedStateId = 0;
   int nextStateId = 1;
+  bool historyReplayInProgress = false;
   bool textEditing = false;
   QLineEdit* textEditor = nullptr;
   std::string textBeforeEditing;

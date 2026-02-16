@@ -13,74 +13,139 @@
 #include "shapes/rounded_rectangle.h"
 #include "shapes/text_shape.h"
 
+ShapePropertyState PropertiesPanel::captureShapeState(
+    const std::shared_ptr<GraphicsObject>& shape) const {
+  ShapePropertyState state;
+  if (!shape) return state;
+
+  state.fillColor = shape->getFillColor();
+  state.strokeColor = shape->getStrokeColor();
+  state.strokeWidth = shape->getStrokeWidth();
+
+  if (auto rr = std::dynamic_pointer_cast<RoundedRectangle>(shape)) {
+    state.hasCornerRadius = true;
+    state.cornerRadius = rr->getCornerRadius();
+  }
+
+  if (auto hex = std::dynamic_pointer_cast<Hexagon>(shape)) {
+    state.hasPointyTop = true;
+    state.pointyTop = hex->isPointyTop();
+  }
+
+  if (auto text = std::dynamic_pointer_cast<TextShape>(shape)) {
+    state.hasTextStyle = true;
+    state.fontFamily = text->getFontFamily();
+    state.fontSize = text->getFontSize();
+    state.hasTextContent = true;
+    state.textContent = text->getText();
+  }
+
+  return state;
+}
+
+void PropertiesPanel::applyStateToShape(
+    const std::shared_ptr<GraphicsObject>& shape,
+    const ShapePropertyState& state) const {
+  if (!shape) return;
+
+  shape->setFillColor(state.fillColor);
+  shape->setStrokeColor(state.strokeColor);
+  shape->setStrokeWidth(state.strokeWidth);
+
+  if (state.hasCornerRadius) {
+    if (auto rr = std::dynamic_pointer_cast<RoundedRectangle>(shape))
+      rr->setCornerRadius(state.cornerRadius);
+  }
+
+  if (state.hasPointyTop) {
+    if (auto hex = std::dynamic_pointer_cast<Hexagon>(shape))
+      hex->setPointyTop(state.pointyTop);
+  }
+
+  if (state.hasTextStyle) {
+    if (auto text = std::dynamic_pointer_cast<TextShape>(shape)) {
+      text->setFontFamily(state.fontFamily);
+      text->setFontSize(state.fontSize);
+    }
+  }
+}
+
+void PropertiesPanel::pushShapeStateCommand(
+    const std::shared_ptr<GraphicsObject>& shape,
+    const ShapePropertyState& before,
+    const ShapePropertyState& after) {
+  if (!shape || before == after) return;
+  canvas->pushCommand(
+      std::make_unique<ShapePropertyCommand>(shape, before, after));
+}
+
+void PropertiesPanel::beginSliderInteraction() {
+  if (updating || sliderInteractionActive) return;
+  auto shape = canvas->getSelectedShape();
+  if (!shape) return;
+  sliderInteractionActive = true;
+  sliderInteractionShape = shape;
+  sliderInteractionBefore = captureShapeState(shape);
+}
+
+void PropertiesPanel::endSliderInteraction() {
+  if (!sliderInteractionActive) return;
+  auto shape = sliderInteractionShape;
+  auto before = sliderInteractionBefore;
+  sliderInteractionActive = false;
+  sliderInteractionShape = nullptr;
+  if (!shape || shape != canvas->getSelectedShape()) return;
+  auto after = captureShapeState(shape);
+  pushShapeStateCommand(shape, before, after);
+}
+
 void PropertiesPanel::refreshFromSelection() {
   updating = true;
   auto shape = canvas->getSelectedShape();
+  if (sliderInteractionActive && sliderInteractionShape != shape) {
+    sliderInteractionActive = false;
+    sliderInteractionShape = nullptr;
+  }
 
   if (shape) {
-    // If the "Apply" checkboxes are enabled, applying the preview values
-    // is a user action and must be undoable. Snapshot previous values and
-    // push a LambdaCommand when anything changes.
-    bool applied = false;
-    std::string oldFill = shape->getFillColor();
-    std::string oldStroke = shape->getStrokeColor();
-    double oldWidth = shape->getStrokeWidth();
-
-    std::string newFill = oldFill;
-    std::string newStroke = oldStroke;
-    double newWidth = oldWidth;
-
-    if (fillApplyCheck->isChecked()) {
-      newFill = getEffectiveFill().name(QColor::HexArgb).toStdString();
-      applied = (newFill != oldFill);
-    }
-    if (strokeApplyCheck->isChecked()) {
-      newStroke = getEffectiveStroke().name(QColor::HexArgb).toStdString();
-      newWidth = widthSlider->value();
-      applied = applied || (newStroke != oldStroke) || (newWidth != oldWidth);
+    bool allowAutoApply = !canvas->isHistoryReplayInProgress();
+    if (allowAutoApply) {
+      auto before = captureShapeState(shape);
+      auto after = before;
+      if (fillApplyCheck->isChecked())
+        after.fillColor = getEffectiveFill().name(QColor::HexArgb).toStdString();
+      if (strokeApplyCheck->isChecked()) {
+        after.strokeColor =
+            getEffectiveStroke().name(QColor::HexArgb).toStdString();
+        after.strokeWidth = widthSlider->value();
+      }
+      if (after != before) {
+        applyStateToShape(shape, after);
+        pushShapeStateCommand(shape, before, after);
+        canvas->update();
+      }
     }
 
-    if (applied) {
-      // apply immediately
-      shape->setFillColor(newFill);
-      shape->setStrokeColor(newStroke);
-      shape->setStrokeWidth(newWidth);
-      // make change undoable
-      canvas->pushCommand(std::make_unique<LambdaCommand>(
-          [shape, oldFill, oldStroke, oldWidth](Canvas* c) {
-            shape->setFillColor(oldFill);
-            shape->setStrokeColor(oldStroke);
-            shape->setStrokeWidth(oldWidth);
-            c->update();
-          },
-          [shape, newFill, newStroke, newWidth](Canvas* c) {
-            shape->setFillColor(newFill);
-            shape->setStrokeColor(newStroke);
-            shape->setStrokeWidth(newWidth);
-            c->update();
-          }));
-      canvas->update();
-    }
+    auto state = captureShapeState(shape);
 
-    QColor fc(QString::fromStdString(shape->getFillColor()));
+    QColor fc(QString::fromStdString(state.fillColor));
     fillRgb_ = QColor(fc.red(), fc.green(), fc.blue());
     fillAlphaSlider->setValue(fc.alpha());
 
-    QColor sc(QString::fromStdString(shape->getStrokeColor()));
+    QColor sc(QString::fromStdString(state.strokeColor));
     strokeRgb_ = QColor(sc.red(), sc.green(), sc.blue());
     strokeAlphaSlider->setValue(sc.alpha());
-    widthSlider->setValue(static_cast<int>(shape->getStrokeWidth()));
+    widthSlider->setValue(static_cast<int>(state.strokeWidth));
 
-    if (auto rr = std::dynamic_pointer_cast<RoundedRectangle>(shape))
-      cornerSlider->setValue(static_cast<int>(rr->getCornerRadius()));
-    if (auto hex = std::dynamic_pointer_cast<Hexagon>(shape)) {
-      flatTopBtn->setChecked(!hex->isPointyTop());
-      pointyTopBtn->setChecked(hex->isPointyTop());
+    if (state.hasCornerRadius)
+      cornerSlider->setValue(static_cast<int>(state.cornerRadius));
+    if (state.hasPointyTop) {
+      flatTopBtn->setChecked(!state.pointyTop);
+      pointyTopBtn->setChecked(state.pointyTop);
     }
-    if (auto text = std::dynamic_pointer_cast<TextShape>(shape)) {
-      fontCombo->setCurrentFont(
-          QFont(QString::fromStdString(text->getFontFamily())));
-      fontSizeSpin->setValue(text->getFontSize());
+    if (state.hasTextStyle) {
+      fontCombo->setCurrentFont(QFont(QString::fromStdString(state.fontFamily)));
+      fontSizeSpin->setValue(state.fontSize);
     }
   }
 
@@ -94,65 +159,25 @@ void PropertiesPanel::applyToShape() {
   auto shape = canvas->getSelectedShape();
   if (!shape) return;
 
-  // Snapshot previous values
-  std::string oldFill = shape->getFillColor();
-  std::string oldStroke = shape->getStrokeColor();
-  double oldWidth = shape->getStrokeWidth();
-  std::string newFill = getEffectiveFill().name(QColor::HexArgb).toStdString();
-  std::string newStroke =
-      getEffectiveStroke().name(QColor::HexArgb).toStdString();
-  double newWidth = widthSlider->value();
-
-  // Apply new values
-  shape->setFillColor(newFill);
-  shape->setStrokeColor(newStroke);
-  shape->setStrokeWidth(newWidth);
-
-  // Other properties
-  if (auto rr = std::dynamic_pointer_cast<RoundedRectangle>(shape))
-    rr->setCornerRadius(cornerSlider->value());
-  if (auto hex = std::dynamic_pointer_cast<Hexagon>(shape))
-    hex->setPointyTop(pointyTopBtn->isChecked());
-  if (auto text = std::dynamic_pointer_cast<TextShape>(shape)) {
-    std::string oldFamily = text->getFontFamily();
-    int oldSize = text->getFontSize();
-    std::string newFamily = fontCombo->currentFont().family().toStdString();
-    int newSize = fontSizeSpin->value();
-    text->setFontFamily(newFamily);
-    text->setFontSize(newSize);
-
-    // push command for font changes
-    canvas->pushCommand(std::make_unique<LambdaCommand>(
-        [shape, oldFamily, oldSize](Canvas* c) {
-          if (auto t = std::dynamic_pointer_cast<TextShape>(shape)) {
-            t->setFontFamily(oldFamily);
-            t->setFontSize(oldSize);
-            c->update();
-          }
-        },
-        [shape, newFamily, newSize](Canvas* c) {
-          if (auto t = std::dynamic_pointer_cast<TextShape>(shape)) {
-            t->setFontFamily(newFamily);
-            t->setFontSize(newSize);
-            c->update();
-          }
-        }));
+  auto before = captureShapeState(shape);
+  auto after = before;
+  after.fillColor = getEffectiveFill().name(QColor::HexArgb).toStdString();
+  after.strokeColor = getEffectiveStroke().name(QColor::HexArgb).toStdString();
+  after.strokeWidth = widthSlider->value();
+  if (after.hasCornerRadius) after.cornerRadius = cornerSlider->value();
+  if (after.hasPointyTop) after.pointyTop = pointyTopBtn->isChecked();
+  if (after.hasTextStyle) {
+    after.fontFamily = fontCombo->currentFont().family().toStdString();
+    after.fontSize = fontSizeSpin->value();
   }
 
-  // push a command for color/width changes
-  canvas->pushCommand(std::make_unique<LambdaCommand>(
-      [shape, oldFill, oldStroke, oldWidth](Canvas* c) {
-        shape->setFillColor(oldFill);
-        shape->setStrokeColor(oldStroke);
-        shape->setStrokeWidth(oldWidth);
-        c->update();
-      },
-      [shape, newFill, newStroke, newWidth](Canvas* c) {
-        shape->setFillColor(newFill);
-        shape->setStrokeColor(newStroke);
-        shape->setStrokeWidth(newWidth);
-        c->update();
-      }));
+  if (before == after) {
+    canvas->update();
+    return;
+  }
+
+  applyStateToShape(shape, after);
+  if (!sliderInteractionActive) pushShapeStateCommand(shape, before, after);
 
   updatePreviews();
   canvas->update();

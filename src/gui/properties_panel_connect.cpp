@@ -14,6 +14,10 @@ void PropertiesPanel::connectSignals() {
           fillAlphaSlider, &QSlider::setValue);
   connect(fillAlphaSlider, &QSlider::valueChanged, this,
           &PropertiesPanel::applyToShape);
+  connect(fillAlphaSlider, &QSlider::sliderPressed, this,
+          [this]() { beginSliderInteraction(); });
+  connect(fillAlphaSlider, &QSlider::sliderReleased, this,
+          [this]() { endSliderInteraction(); });
 
   // Stroke Opacity
   connect(strokeAlphaSlider, &QSlider::valueChanged, strokeAlphaSpin,
@@ -22,6 +26,10 @@ void PropertiesPanel::connectSignals() {
           strokeAlphaSlider, &QSlider::setValue);
   connect(strokeAlphaSlider, &QSlider::valueChanged, this,
           &PropertiesPanel::applyToShape);
+  connect(strokeAlphaSlider, &QSlider::sliderPressed, this,
+          [this]() { beginSliderInteraction(); });
+  connect(strokeAlphaSlider, &QSlider::sliderReleased, this,
+          [this]() { endSliderInteraction(); });
 
   // Width
   connect(widthSlider, &QSlider::valueChanged, widthSpin, &QSpinBox::setValue);
@@ -29,6 +37,10 @@ void PropertiesPanel::connectSignals() {
           &QSlider::setValue);
   connect(widthSlider, &QSlider::valueChanged, this,
           &PropertiesPanel::applyToShape);
+  connect(widthSlider, &QSlider::sliderPressed, this,
+          [this]() { beginSliderInteraction(); });
+  connect(widthSlider, &QSlider::sliderReleased, this,
+          [this]() { endSliderInteraction(); });
 
   // Corner Radius
   connect(cornerSlider, &QSlider::valueChanged, cornerSpin,
@@ -37,6 +49,10 @@ void PropertiesPanel::connectSignals() {
           &QSlider::setValue);
   connect(cornerSlider, &QSlider::valueChanged, this,
           &PropertiesPanel::applyToShape);
+  connect(cornerSlider, &QSlider::sliderPressed, this,
+          [this]() { beginSliderInteraction(); });
+  connect(cornerSlider, &QSlider::sliderReleased, this,
+          [this]() { endSliderInteraction(); });
 
   // Orientation
   connect(flatTopBtn, &QPushButton::clicked, this, [this]() {

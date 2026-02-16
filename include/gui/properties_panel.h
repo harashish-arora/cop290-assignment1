@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <memory>
 
+#include "tools/command.h"
+
 class QSlider;
 class QSpinBox;
 class QPushButton;
@@ -61,7 +63,20 @@ class PropertiesPanel : public QWidget {
 
   QColor getEffectiveFill() const;
   QColor getEffectiveStroke() const;
+  ShapePropertyState captureShapeState(
+      const std::shared_ptr<GraphicsObject>& shape) const;
+  void applyStateToShape(const std::shared_ptr<GraphicsObject>& shape,
+                         const ShapePropertyState& state) const;
+  void pushShapeStateCommand(const std::shared_ptr<GraphicsObject>& shape,
+                             const ShapePropertyState& before,
+                             const ShapePropertyState& after);
+  void beginSliderInteraction();
+  void endSliderInteraction();
   void updatePreviews();
   void setupGrid(QHBoxLayout* mainRow);
   void connectSignals();
+
+  bool sliderInteractionActive = false;
+  std::shared_ptr<GraphicsObject> sliderInteractionShape = nullptr;
+  ShapePropertyState sliderInteractionBefore;
 };
