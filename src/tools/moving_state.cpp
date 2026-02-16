@@ -1,12 +1,16 @@
-// moving_state.cpp — Handles dragging to move a selected shape
+// moving state cpp
+// fsm state for dragging to move a selected shape
+
 #include "tools/moving_state.h"
 
 #include "gui/canvas.h"
 #include "tools/command.h"
 #include "tools/idle_state.h"
 
+// no extra press handling needed in moving state
 void MovingState::handleMousePress(Canvas*, QMouseEvent*) {}
 
+// move selected shape using mouse delta from last recorded position
 void MovingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   if (!(event->buttons() & Qt::LeftButton)) return;
 
@@ -27,6 +31,7 @@ void MovingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   canvas->update();
 }
 
+// on release store one move command with total drag delta then return to idle
 void MovingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
   auto& sel = canvas->getSelectedShape();

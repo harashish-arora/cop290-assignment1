@@ -1,12 +1,16 @@
-// main_window_menus.cpp — File and Edit menu creation
+// main window menus cpp
+// implementation for main window menus
+
 #include <QMenuBar>
 
 #include "gui/canvas.h"
 #include "gui/main_window.h"
 
+// build file and edit menus and connect actions to canvas slots
 void MainWindow::createMenus() {
   QMenu* fileMenu = menuBar()->addMenu("&File");
 
+  // file actions
   QAction* newAction = fileMenu->addAction("New");
   newAction->setShortcut(QKeySequence::New);
   connect(newAction, &QAction::triggered, canvas, &Canvas::newFile);
@@ -29,6 +33,7 @@ void MainWindow::createMenus() {
   closeAction->setShortcut(QKeySequence::Close);
   connect(closeAction, &QAction::triggered, this, &MainWindow::closeFile);
 
+  // edit actions
   QMenu* editMenu = menuBar()->addMenu("&Edit");
 
   QAction* undoAction = editMenu->addAction("Undo");

@@ -1,4 +1,6 @@
-// properties_panel_state.cpp — snapshot/apply helpers for property commands
+// properties panel state cpp
+// implementation for properties panel state
+
 #include "gui/properties_panel.h"
 
 #include <memory>
@@ -8,6 +10,7 @@
 #include "shapes/rounded_rectangle.h"
 #include "shapes/text_shape.h"
 
+// capture current shape properties into a snapshot object
 ShapePropertyState PropertiesPanel::captureShapeState(
     const std::shared_ptr<GraphicsObject>& shape) const {
   ShapePropertyState state;
@@ -33,6 +36,7 @@ ShapePropertyState PropertiesPanel::captureShapeState(
   return state;
 }
 
+// apply a snapshot to a shape including shape specific fields
 void PropertiesPanel::applyStateToShape(
     const std::shared_ptr<GraphicsObject>& shape,
     const ShapePropertyState& state) const {
@@ -56,6 +60,7 @@ void PropertiesPanel::applyStateToShape(
   }
 }
 
+// helper to push one undoable property command only when changed
 void PropertiesPanel::pushShapeStateCommand(
     const std::shared_ptr<GraphicsObject>& shape,
     const ShapePropertyState& before,
@@ -65,6 +70,7 @@ void PropertiesPanel::pushShapeStateCommand(
       std::make_unique<ShapePropertyCommand>(shape, before, after));
 }
 
+// start slider interaction session to coalesce many value changed events
 void PropertiesPanel::beginSliderInteraction() {
   if (updating || sliderInteractionActive) return;
   auto shape = canvas->getSelectedShape();
@@ -74,6 +80,7 @@ void PropertiesPanel::beginSliderInteraction() {
   sliderInteractionBefore = captureShapeState(shape);
 }
 
+// end slider session and push one combined command
 void PropertiesPanel::endSliderInteraction() {
   if (!sliderInteractionActive) return;
   auto shape = sliderInteractionShape;

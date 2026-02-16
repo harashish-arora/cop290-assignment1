@@ -1,10 +1,13 @@
-// tool_bar.cpp — Layout, styling, signal connections
+// tool bar cpp
+// minimal toolbar that hosts tool buttons select, rectangle, circle
+
 #include "gui/tool_bar.h"
 
 #include <QVBoxLayout>
 
 #include "gui/canvas.h"
 
+// build toolbar layout styles and signal bindings for shape modes
 ToolBar::ToolBar(Canvas* canvas, QWidget* parent)
     : QWidget(parent), canvas(canvas) {
   auto* layout = new QVBoxLayout(this);
@@ -57,6 +60,7 @@ ToolBar::ToolBar(Canvas* canvas, QWidget* parent)
     }
   )");
 
+  // each button sets canvas mode then updates visual highlight
   auto bind = [&](QPushButton* btn, ShapeMode mode) {
     connect(btn, &QPushButton::clicked, this, [this, mode]() {
       this->canvas->setMode(mode);
@@ -73,6 +77,7 @@ ToolBar::ToolBar(Canvas* canvas, QWidget* parent)
   bind(textBtn, ShapeMode::TEXT);
 }
 
+// keep checked state synced with current canvas mode
 void ToolBar::updateHighlight() {
   selectBtn->setChecked(canvas->getMode() == ShapeMode::SELECT);
   rectBtn->setChecked(canvas->getMode() == ShapeMode::RECTANGLE);

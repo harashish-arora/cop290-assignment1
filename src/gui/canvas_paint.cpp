@@ -1,4 +1,6 @@
-// canvas_paint.cpp — Canvas paint routine
+// canvas paint cpp
+// implementation for canvas paint
+
 #include "gui/canvas.h"
 
 #include <QPainter>
@@ -11,6 +13,8 @@
 #include "shapes/text_shape.h"
 #include "tools/handle_helpers.h"
 
+// paint flow
+// draw committed shapes first then draw preview while creating then selection handles
 void Canvas::paintEvent(QPaintEvent*) {
   QPainter painter(this);
   painter.fillRect(rect(), Qt::white);
@@ -24,6 +28,7 @@ void Canvas::paintEvent(QPaintEvent*) {
   }
 
   if (previewShape) {
+    // preview uses dashed outline so user can see shape being created
     QPen dash(Qt::black, 1, Qt::DashLine);
     painter.setPen(dash);
     painter.setBrush(Qt::NoBrush);

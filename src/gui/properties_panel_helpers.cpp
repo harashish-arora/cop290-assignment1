@@ -1,4 +1,6 @@
-// properties_panel_helpers.cpp — UI factory helpers for PropertiesPanel
+// properties panel helpers cpp
+// helper functions used by the properties panel
+
 #include "gui/properties_panel_helpers.h"
 
 #include <QCheckBox>
@@ -13,6 +15,7 @@
 
 #include "gui/properties_panel.h"
 
+// create configured horizontal slider used across panel rows
 QSlider* makeSlider(int lo, int hi, int val) {
   auto* s = new QSlider(Qt::Horizontal);
   s->setRange(lo, hi);
@@ -20,6 +23,8 @@ QSlider* makeSlider(int lo, int hi, int val) {
   s->setFixedWidth(90);
   return s;
 }
+
+// create configured spinbox used across panel rows
 QSpinBox* makeSpin(int lo, int hi, int val) {
   auto* s = new QSpinBox;
   s->setRange(lo, hi);
@@ -27,6 +32,8 @@ QSpinBox* makeSpin(int lo, int hi, int val) {
   s->setFixedWidth(48);
   return s;
 }
+
+// simple vertical separator widget between panel sections
 QFrame* vSep() {
   auto* f = new QFrame;
   f->setFrameShape(QFrame::VLine);
@@ -34,6 +41,8 @@ QFrame* vSep() {
   f->setStyleSheet("color: #c0c0c0;");
   return f;
 }
+
+// stylesheet for live rgba preview button
 QString previewBtnStyle(const QColor& c) {
   return QString(
              "QPushButton { background: rgba(%1,%2,%3,%4);"
@@ -44,6 +53,8 @@ QString previewBtnStyle(const QColor& c) {
       .arg(c.blue())
       .arg(c.alpha());
 }
+
+// stylesheet for fixed preset color swatch buttons
 QString swatchStyle(const QColor& c) {
   return QString(
              "QPushButton { background: %1; border: 1px solid #999;"
@@ -57,6 +68,7 @@ const char* kCheckStyle =
 const char* kBoldLabel = "font-weight: 600; color: #222; font-size: 11px;";
 const char* kSectionTitle = "font-weight: 700; font-size: 12px; color: #222;";
 
+// build one color column with title preview presets and apply on click checkbox
 QVBoxLayout* buildColorColumn(const char* title, QPushButton*& previewOut,
                               QCheckBox*& checkOut, const QColor presets[],
                               PropertiesPanel* panel, const char* presetSlot) {

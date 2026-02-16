@@ -1,19 +1,25 @@
-// hexagon_geo.cpp — Hexagon geometry: contains, bbox, transform, clone
+// hexagon geo cpp
+// implementation for hexagon geo
+
 #include "shapes/hexagon.h"
 
+// point in polygon test on computed hex points
 bool Hexagon::contains(double x, double y) const {
   return hexPoints().containsPoint(QPointF(x, y), Qt::OddEvenFill);
 }
 
+// bounding box from center and radii
 QRectF Hexagon::boundingBox() const {
   return QRectF(cx - rx, cy - ry, 2 * rx, 2 * ry);
 }
 
+// center setter
 void Hexagon::setCenter(double x, double y) {
   cx = x;
   cy = y;
 }
 
+// radii setter with cached width height update
 void Hexagon::setRadii(double newRx, double newRy) {
   rx = newRx;
   ry = newRy;
@@ -21,11 +27,13 @@ void Hexagon::setRadii(double newRx, double newRy) {
   height = 2 * ry;
 }
 
+// translate center
 void Hexagon::moveBy(double dx, double dy) {
   cx += dx;
   cy += dy;
 }
 
+// clone with orientation and style
 std::shared_ptr<GraphicsObject> Hexagon::clone() const {
   auto copy = std::make_shared<Hexagon>(cx, cy, rx, ry);
   copy->setPointyTop(pointyTop);
@@ -35,6 +43,7 @@ std::shared_ptr<GraphicsObject> Hexagon::clone() const {
   return copy;
 }
 
+// restore geometry from axis aligned box
 void Hexagon::setFromBoundingBox(const QRectF& box) {
   cx = box.center().x();
   cy = box.center().y();

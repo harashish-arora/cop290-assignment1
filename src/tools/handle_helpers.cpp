@@ -1,4 +1,6 @@
-// handle_helpers.cpp — Hit-testing and cursor updates
+// handle helpers cpp
+// shared handle utilities hit test, drawing, cursor
+
 #include "tools/handle_helpers.h"
 
 #include <cmath>
@@ -6,15 +8,18 @@
 #include "shapes/line.h"
 #include "shapes/text_shape.h"
 
+// return which resize handle is near the given point
+// line and text follow special handling rules
 HandleType getHandleAt(QPointF point,
                        const std::shared_ptr<GraphicsObject>& shape) {
   if (!shape) return HandleType::NONE;
 
   auto isNear = [&](double px, double py) {
-    return std::abs(point.x() - px) <= HANDLE_TOLERANCE &&
-           std::abs(point.y() - py) <= HANDLE_TOLERANCE;
+	  return std::abs(point.x() - px) <= HANDLE_TOLERANCE &&
+	         std::abs(point.y() - py) <= HANDLE_TOLERANCE;
   };
 
+  // line exposes only two endpoint handles
   auto line = std::dynamic_pointer_cast<Line>(shape);
   if (line) {
     if (isNear(line->getX1(), line->getY1())) return HandleType::LINE_START;
@@ -22,6 +27,7 @@ HandleType getHandleAt(QPointF point,
     return HandleType::NONE;
   }
 
+  // text is not resized by handles
   auto text = std::dynamic_pointer_cast<TextShape>(shape);
   if (text) return HandleType::NONE;
 
@@ -42,6 +48,7 @@ HandleType getHandleAt(QPointF point,
   return HandleType::NONE;
 }
 
+// set cursor icon according to hovered handle type
 void updateCursorForHandle(QWidget* widget, HandleType handle) {
   switch (handle) {
     case HandleType::TOP_LEFT:

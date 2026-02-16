@@ -1,7 +1,10 @@
-// app_style.cpp — Global light theme stylesheet
+// app_style.cpp
+// global application stylesheet
+
 #include "gui/app_style.h"
 
-QString appStyleSheet() {
+// return one global Qt stylesheet string for the whole application
+QString styleSheet() {
   return R"(
     QMainWindow { background: #f0f0f0; }
     QMenuBar {

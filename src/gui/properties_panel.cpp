@@ -1,4 +1,6 @@
-// properties_panel.cpp — Constructor and color helper methods
+// properties panel cpp
+// fill stroke properties editor with colour picker
+
 #include "gui/properties_panel.h"
 
 #include <QFrame>
@@ -12,6 +14,7 @@
 #include "gui/properties_panel_helpers.h"
 #include "tools/shape_style_defaults.h"
 
+// create panel ui sections initialize defaults and wire signals
 PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
     : QWidget(parent), canvas(canvas) {
   auto* mainRow = new QHBoxLayout(this);
@@ -36,7 +39,7 @@ PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
   const QColor presets[] = {Qt::red,   Qt::green,  Qt::blue, Qt::black,
                             Qt::white, Qt::yellow, Qt::cyan, Qt::magenta};
 
-  // Fill Column
+  // fill column
   mainRow->addLayout(buildColorColumn("Fill", fillPreview, fillApplyCheck,
                                       presets, this,
                                       SLOT(onFillPresetClicked())));
@@ -44,7 +47,7 @@ PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
           &PropertiesPanel::onFillPreviewClicked);
   mainRow->addWidget(vSep());
 
-  // Stroke Column
+  // stroke column
   mainRow->addLayout(buildColorColumn("Stroke", strokePreview, strokeApplyCheck,
                                       presets, this,
                                       SLOT(onStrokePresetClicked())));
@@ -68,17 +71,21 @@ PropertiesPanel::PropertiesPanel(Canvas* canvas, QWidget* parent)
   setFixedHeight(120);
 }
 
+// compose fill color using rgb from picker and alpha from slider
 QColor PropertiesPanel::getEffectiveFill() const {
   QColor c = fillRgb_;
   c.setAlpha(fillAlphaSlider->value());
   return c;
 }
+
+// compose stroke color using rgb from picker and alpha from slider
 QColor PropertiesPanel::getEffectiveStroke() const {
   QColor c = strokeRgb_;
   c.setAlpha(strokeAlphaSlider->value());
   return c;
 }
 
+// keep creation defaults synced with panel controls for new shapes
 void PropertiesPanel::syncCreationDefaults() {
   auto d = getCreationDefaults();
   d.fillColor = getEffectiveFill().name(QColor::HexArgb).toStdString();
@@ -91,6 +98,7 @@ void PropertiesPanel::syncCreationDefaults() {
   setCreationDefaults(d);
 }
 
+// refresh small color preview buttons
 void PropertiesPanel::updatePreviews() {
   fillPreview->setStyleSheet(previewBtnStyle(getEffectiveFill()));
   strokePreview->setStyleSheet(previewBtnStyle(getEffectiveStroke()));

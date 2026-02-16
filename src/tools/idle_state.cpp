@@ -1,4 +1,6 @@
-// idle_state.cpp — Handles clicks when idle (select, start move/resize)
+// idle state cpp
+// fsm state for when nothing is being dragged
+
 #include "tools/idle_state.h"
 
 #include "gui/canvas.h"
@@ -9,9 +11,11 @@
 #include "tools/resizing_state.h"
 #include "tools/shape_style_defaults.h"
 
-// Defined in idle_state_create.cpp
+// defined in idle state create cpp
 void startShapeCreation(Canvas* canvas, QPointF click);
 
+// handle press in idle state
+// this decides if user is resizing moving editing text or creating a new shape
 void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
   QPointF click = event->position();
@@ -19,6 +23,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
   canvas->setLastMousePos(click);
   auto& selected = canvas->getSelectedShape();
   if (selected) {
+    // clicking a handle switches to resizing state
     HandleType handle = getHandleAt(click, selected);
     if (handle != HandleType::NONE) {
       QRectF box = selected->boundingBox();
@@ -32,6 +37,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
     }
   }
 
+  // clicking a shape switches to moving state
   auto& shapes = canvas->getShapes();
   for (auto it = shapes.rbegin(); it != shapes.rend(); ++it) {
     if ((*it)->contains(click.x(), click.y())) {
@@ -44,6 +50,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
     }
   }
 
+  // text mode creates a draft text shape and starts inline editing
   if (canvas->getMode() == ShapeMode::TEXT) {
     auto txt = std::make_shared<TextShape>(click.x(), click.y(), "");
     auto defaults = getCreationDefaults();
@@ -59,16 +66,20 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
     return;
   }
 
+  // empty click clears selection
   canvas->setSelectedShape(nullptr);
 
+  // select mode stops here no new shape creation
   if (canvas->getMode() == ShapeMode::SELECT) {
     canvas->update();
     return;
   }
 
+  // shape modes create preview shape and go to creating state
   startShapeCreation(canvas, click);
 }
 
+// update cursor feedback for handles and selectable shapes
 void IdleState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   QPointF pos = event->position();
   auto& selected = canvas->getSelectedShape();
@@ -91,6 +102,7 @@ void IdleState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
 
 void IdleState::handleMouseRelease(Canvas*, QMouseEvent*) {}
 
+// keyboard delete removes selected shape
 void IdleState::handleKeyPress(Canvas* canvas, QKeyEvent* event) {
   if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
     canvas->deleteSelected();

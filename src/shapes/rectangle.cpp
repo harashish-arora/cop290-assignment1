@@ -1,11 +1,13 @@
-// rectangle.cpp
+// rectangle cpp
+// rectangle shape class definition
+
 #include "shapes/rectangle.h"
 
 #include <algorithm>
 
-// Constructor
+// constructor
 Rectangle::Rectangle(double x, double y, double w, double h) : x(x), y(y) {
-  // We must set these in the body because they belong to the Parent class
+  // we must set these in the body because they belong to the parent class
   this->width = w;
   this->height = h;
 }
@@ -13,7 +15,7 @@ Rectangle::Rectangle(double x, double y, double w, double h) : x(x), y(y) {
 // bounding box
 QRectF Rectangle::boundingBox() const { return QRectF(x, y, width, height); }
 
-// Draw
+// draw
 void Rectangle::draw(QPainter& painter) const {
   QPen pen(QColor(strokeColor.c_str()));
   pen.setWidthF(strokeWidth);
@@ -30,12 +32,12 @@ void Rectangle::draw(QPainter& painter) const {
   painter.drawRect(QRectF(x, y, width, height));
 }
 
-// Contains Check
+// contains check
 bool Rectangle::contains(double mouseX, double mouseY) const {
   return boundingBox().contains(mouseX, mouseY);
 }
 
-// SVG Output
+// svg output
 std::string Rectangle::toSVG() const {
   return "<rect x=\"" + std::to_string(x) + "\" " + "y=\"" + std::to_string(y) +
          "\" " + "width=\"" + std::to_string(width) + "\" " + "height=\"" +
@@ -44,19 +46,19 @@ std::string Rectangle::toSVG() const {
          svgColorAttr("fill", fillColor) + " />";
 }
 
-// Resize (Update the parent fields)
+// resize update the parent fields
 void Rectangle::setGeometry(double nw, double nh) {
   width = nw;
   height = nh;
 }
 
-// Move
+// move
 void Rectangle::moveBy(double dx, double dy) {
   x += dx;
   y += dy;
 }
 
-// Clone — returns an independent deep copy
+// clone returns an independent deep copy
 std::shared_ptr<GraphicsObject> Rectangle::clone() const {
   auto copy = std::make_shared<Rectangle>(x, y, width, height);
   copy->setFillColor(getFillColor());

@@ -3,4 +3,4 @@
 #pragma once
 #include <QString>
 
-QString appStyleSheet();
+QString styleSheet();

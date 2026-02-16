@@ -1,10 +1,13 @@
-// properties_panel_dialogs.cpp — Preset click & color-picker dialog slots
+// properties panel dialogs cpp
+// implementation for properties panel dialogs
+
 #include <QColorDialog>
 #include <QPushButton>
 #include <QSlider>
 
 #include "gui/properties_panel.h"
 
+// preset click updates fill rgb then applies to selected shape
 void PropertiesPanel::onFillPresetClicked() {
   auto* btn = qobject_cast<QPushButton*>(sender());
   if (!btn) return;
@@ -13,6 +16,7 @@ void PropertiesPanel::onFillPresetClicked() {
   applyToShape();
 }
 
+// preset click updates stroke rgb then applies to selected shape
 void PropertiesPanel::onStrokePresetClicked() {
   auto* btn = qobject_cast<QPushButton*>(sender());
   if (!btn) return;
@@ -21,6 +25,7 @@ void PropertiesPanel::onStrokePresetClicked() {
   applyToShape();
 }
 
+// open fill color dialog then sync rgb and alpha controls
 void PropertiesPanel::onFillPreviewClicked() {
   QColor initial = getEffectiveFill();
   QColor chosen = QColorDialog::getColor(initial, this, "Fill Color",
@@ -34,6 +39,7 @@ void PropertiesPanel::onFillPreviewClicked() {
   applyToShape();
 }
 
+// open stroke color dialog then sync rgb and alpha controls
 void PropertiesPanel::onStrokePreviewClicked() {
   QColor initial = getEffectiveStroke();
   QColor chosen = QColorDialog::getColor(initial, this, "Stroke Color",

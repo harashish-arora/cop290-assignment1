@@ -1,4 +1,6 @@
-// creating_state.cpp — Handles drag-to-create a new shape
+// creating state cpp
+// state for dragging to create a new shape
+
 #include "tools/creating_state.h"
 
 #include <cmath>
@@ -13,10 +15,12 @@
 #include "tools/command.h"
 #include "tools/idle_state.h"
 
+// press is ignored because creation starts on previous idle press
 void CreatingState::handleMousePress(Canvas*, QMouseEvent*) {
-  // Already creating — nothing to do
+  // already creating nothing to do
 }
 
+// while dragging update preview geometry for active shape mode
 void CreatingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   if (!(event->buttons() & Qt::LeftButton)) return;
 
@@ -26,6 +30,7 @@ void CreatingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   QPointF current = event->position();
   QPointF start = canvas->getStartPoint();
 
+  // each shape mode maps drag coordinates to its own geometry update
   if (canvas->getMode() == ShapeMode::FREEHAND) {
     auto fh = std::dynamic_pointer_cast<Freehand>(preview);
     if (fh) fh->addPoint(current.x(), current.y());
@@ -58,6 +63,8 @@ void CreatingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   canvas->update();
 }
 
+// commit preview to shape list and push add command when size is valid
+// then return to idle state
 void CreatingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
 

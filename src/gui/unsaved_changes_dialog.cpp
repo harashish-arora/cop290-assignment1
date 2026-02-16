@@ -1,10 +1,13 @@
-// unsaved_changes_dialog.cpp — common unsaved changes modal
+// unsaved changes dialog cpp
+// result of what the prompt shows
+
 #include "gui/unsaved_changes_dialog.h"
 
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QPushButton>
 
+// show unsaved changes prompt and map clicked button to enum choice
 UnsavedChoice promptUnsavedChanges(QWidget* parent, const QString& question) {
   QMessageBox box(parent);
   box.setIcon(QMessageBox::NoIcon);

@@ -1,4 +1,5 @@
-// moving_state.h — State for dragging to move a selected shape
+// moving_state.h
+// fsm state for dragging to move a selected shape
 #pragma once
 #include "tools/canvas_state.h"
 

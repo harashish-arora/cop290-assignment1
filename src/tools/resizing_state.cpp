@@ -1,4 +1,6 @@
-// resizing_state.cpp — Handles dragging a handle to resize a shape
+// resizing state cpp
+// fsm state for dragging a handle to resize a shape
+
 #include "tools/resizing_state.h"
 
 #include <algorithm>
@@ -8,6 +10,7 @@
 #include "tools/command.h"
 #include "tools/idle_state.h"
 
+// constructor captures active handle and original box used for undo
 ResizingState::ResizingState(HandleType handle, double left, double top,
                              double right, double bottom)
     : activeHandle(handle),
@@ -17,6 +20,7 @@ ResizingState::ResizingState(HandleType handle, double left, double top,
       anchorBottom(bottom),
       oldBox(left, top, right - left, bottom - top) {}
 
+// save freehand points before resize so shape can be remapped proportionally
 void ResizingState::snapshotFreehandPoints(const std::vector<QPointF>& pts) {
   origFreehandPts = pts;
   if (!pts.empty()) {
@@ -32,8 +36,10 @@ void ResizingState::snapshotFreehandPoints(const std::vector<QPointF>& pts) {
   }
 }
 
+// press already handled in idle state
 void ResizingState::handleMousePress(Canvas*, QMouseEvent*) {}
 
+// update selected shape while dragging active handle
 void ResizingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   if (!(event->buttons() & Qt::LeftButton)) return;
   auto& selected = canvas->getSelectedShape();
@@ -41,6 +47,7 @@ void ResizingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
 
   QPointF pos = event->position();
 
+  // line uses endpoint handles not box resize
   auto line = std::dynamic_pointer_cast<Line>(selected);
   if (line) {
     if (activeHandle == HandleType::LINE_START)
@@ -55,6 +62,7 @@ void ResizingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
   applyResize(canvas, pos);
 }
 
+// push one resize command if geometry changed then return to idle
 void ResizingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   if (event->button() != Qt::LeftButton) return;
   auto& sel = canvas->getSelectedShape();

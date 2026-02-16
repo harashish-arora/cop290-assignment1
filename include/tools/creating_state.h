@@ -1,4 +1,5 @@
-// creating_state.h — State for dragging to create a new shape
+// creating_state.h
+// State for dragging to create a new shape
 #pragma once
 #include "tools/canvas_state.h"
 

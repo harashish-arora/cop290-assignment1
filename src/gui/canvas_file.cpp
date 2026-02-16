@@ -1,4 +1,6 @@
-// canvas_file.cpp — Save, open, new file operations
+// canvas_file.cpp
+// file handling for canvas - new/open/save/save as with unsaved changes prompt
+
 #include <QFileDialog>
 #include <fstream>
 
@@ -6,6 +8,8 @@
 #include "gui/unsaved_changes_dialog.h"
 #include "parse/svg_parser.h"
 
+// save current document to current file path
+// update saved snapshot after successful write
 void Canvas::save() {
   if (currentFilePath.isEmpty()) {
     saveAs();
@@ -13,14 +17,19 @@ void Canvas::save() {
   }
   std::ofstream file(currentFilePath.toStdString());
   if (!file.is_open()) return;
+
   file << "<svg width=\"" << width() << "\" height=\"" << height()
        << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+
   for (const auto& shape : shapes) file << "  " << shape->toSVG() << "\n";
+
   file << "</svg>\n";
+
   savedXml = computeDocumentXml();
   syncModifiedState();
 }
 
+// ask user for a path, then call save
 void Canvas::saveAs() {
   QString path = QFileDialog::getSaveFileName(this, "Save SVG", QString(),
                                               "SVG Files (*.svg)");
@@ -29,6 +38,8 @@ void Canvas::saveAs() {
   save();
 }
 
+// open svg file and replace document contents
+// reset undo/redo stacks and update saved snapshot
 void Canvas::openFile() {
   QString path = QFileDialog::getOpenFileName(this, "Open SVG", QString(),
                                               "SVG Files (*.svg)");
@@ -43,12 +54,14 @@ void Canvas::openFile() {
   setSelectedShape(nullptr);
   shapes = std::move(loaded);
   currentFilePath = path;
-  // record saved XML after loading file
+
+  // update saved snapshot after loading new file
   savedXml = computeDocumentXml();
   syncModifiedState();
   update();
 }
 
+// create new blank document with unsaved changes prompt
 void Canvas::newFile() {
   if (dirty) {
     auto choice = promptUnsavedChanges(

@@ -1,9 +1,11 @@
-// canvas_clipboard.cpp — cut/copy/paste/delete/clear commands
+// canvas_clipboard.cpp
+// cut/copy/paste/delete/clear commands
 #include <algorithm>
 
 #include "gui/canvas.h"
 #include "tools/command.h"
 
+// clipboard operations for cut/copy/paste/delete/clear commands
 void Canvas::deleteSelected() {
   if (!selectedShape) return;
   auto removedShape = selectedShape;
@@ -18,12 +20,14 @@ void Canvas::copySelected() {
   if (selectedShape) clipboard = selectedShape->clone();
 }
 
+// cut copies then deletes the selected shape
 void Canvas::cutSelected() {
   if (!selectedShape) return;
   clipboard = selectedShape->clone();
   deleteSelected();
 }
 
+// paste creates a clone of the clipboard shape and adds it to the document
 void Canvas::pasteAtCursor() {
   if (!clipboard) return;
   auto shape = clipboard->clone();
@@ -36,6 +40,7 @@ void Canvas::pasteAtCursor() {
   update();
 }
 
+// clear all deletes all shapes and clears selection with a single command
 void Canvas::clearAll() {
   if (shapes.empty()) return;
   auto clearCmd = std::make_unique<ClearAllCommand>(shapes, selectedShape);

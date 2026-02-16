@@ -1,12 +1,17 @@
-// handle_helpers_draw.cpp — Drawing selection handles
+// handle helpers draw cpp
+// implementation for handle helpers draw
+
 #include "shapes/line.h"
 #include "shapes/text_shape.h"
 #include "tools/handle_helpers.h"
 
+// draw selection visuals for current selected shape
+// line and text use custom handle rules
 void drawSelectionHandles(QPainter& painter,
                           const std::shared_ptr<GraphicsObject>& shape) {
   if (!shape) return;
 
+  // line selection shows endpoint circle handles
   auto line = std::dynamic_pointer_cast<Line>(shape);
   if (line) {
     QRectF box = shape->boundingBox();
@@ -22,6 +27,7 @@ void drawSelectionHandles(QPainter& painter,
     return;
   }
 
+  // text selection only shows dashed bounds no resize handles
   auto text = std::dynamic_pointer_cast<TextShape>(shape);
   if (text) {
     QRectF box = shape->boundingBox();
@@ -39,6 +45,7 @@ void drawSelectionHandles(QPainter& painter,
     return;
   }
 
+  // default shape selection draws box and eight square handles
   QRectF box = shape->boundingBox();
   QPen borderPen(Qt::cyan, 1, Qt::DashLine);
   painter.setPen(borderPen);

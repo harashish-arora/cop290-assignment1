@@ -1,3 +1,6 @@
+// properties panel grid cpp
+// implementation for properties panel grid
+
 #include <QFontComboBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -8,11 +11,13 @@
 #include "gui/properties_panel.h"
 #include "gui/properties_panel_helpers.h"
 
+// build grid section with sliders toggles and text controls
 void PropertiesPanel::setupGrid(QHBoxLayout* mainRow) {
   auto* grid = new QGridLayout;
   grid->setSpacing(4);
   grid->setColumnMinimumWidth(3, 12);
   {
+    // row one fill opacity and stroke width
     auto* l = new QLabel("Fill Opacity");
     l->setStyleSheet(kBoldLabel);
     l->setToolTip("Fill transparency (0-255)");
@@ -31,6 +36,7 @@ void PropertiesPanel::setupGrid(QHBoxLayout* mainRow) {
     grid->addWidget(widthSpin, 0, 6);
   }
   {
+    // row two stroke opacity and rounded rectangle corner radius
     auto* l = new QLabel("Stroke Opacity");
     l->setStyleSheet(kBoldLabel);
     l->setToolTip("Stroke transparency (0-255)");
@@ -49,6 +55,7 @@ void PropertiesPanel::setupGrid(QHBoxLayout* mainRow) {
     grid->addWidget(cornerSpin, 1, 6);
   }
   {
+    // row three hex orientation toggle buttons
     auto* oriBox = new QHBoxLayout;
     oriBox->setSpacing(4);
     auto* ol = new QLabel("Hex Orientation");
@@ -72,6 +79,7 @@ void PropertiesPanel::setupGrid(QHBoxLayout* mainRow) {
     oriBox->addWidget(pointyTopBtn);
     grid->addLayout(oriBox, 2, 0, 1, 3);
 
+    // row three text font controls
     auto* fontBox = new QHBoxLayout;
     fontBox->setSpacing(4);
     auto* fl = new QLabel("Text Font");

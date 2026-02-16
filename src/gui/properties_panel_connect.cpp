@@ -1,4 +1,6 @@
-// properties_panel_connect.cpp — Signal-slot wiring
+// properties panel connect cpp
+// implementation for properties panel connect
+
 #include <QFontComboBox>
 #include <QPushButton>
 #include <QSlider>
@@ -6,8 +8,9 @@
 
 #include "gui/properties_panel.h"
 
+// connect all ui controls to apply logic and slider session helpers
 void PropertiesPanel::connectSignals() {
-  // Fill Opacity
+  // fill opacity
   connect(fillAlphaSlider, &QSlider::valueChanged, fillAlphaSpin,
           &QSpinBox::setValue);
   connect(fillAlphaSpin, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -19,7 +22,7 @@ void PropertiesPanel::connectSignals() {
   connect(fillAlphaSlider, &QSlider::sliderReleased, this,
           [this]() { endSliderInteraction(); });
 
-  // Stroke Opacity
+  // stroke opacity
   connect(strokeAlphaSlider, &QSlider::valueChanged, strokeAlphaSpin,
           &QSpinBox::setValue);
   connect(strokeAlphaSpin, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -31,7 +34,7 @@ void PropertiesPanel::connectSignals() {
   connect(strokeAlphaSlider, &QSlider::sliderReleased, this,
           [this]() { endSliderInteraction(); });
 
-  // Width
+  // width
   connect(widthSlider, &QSlider::valueChanged, widthSpin, &QSpinBox::setValue);
   connect(widthSpin, QOverload<int>::of(&QSpinBox::valueChanged), widthSlider,
           &QSlider::setValue);
@@ -42,7 +45,7 @@ void PropertiesPanel::connectSignals() {
   connect(widthSlider, &QSlider::sliderReleased, this,
           [this]() { endSliderInteraction(); });
 
-  // Corner Radius
+  // corner radius
   connect(cornerSlider, &QSlider::valueChanged, cornerSpin,
           &QSpinBox::setValue);
   connect(cornerSpin, QOverload<int>::of(&QSpinBox::valueChanged), cornerSlider,
@@ -54,7 +57,7 @@ void PropertiesPanel::connectSignals() {
   connect(cornerSlider, &QSlider::sliderReleased, this,
           [this]() { endSliderInteraction(); });
 
-  // Orientation
+  // orientation
   connect(flatTopBtn, &QPushButton::clicked, this, [this]() {
     flatTopBtn->setChecked(true);
     pointyTopBtn->setChecked(false);
@@ -66,7 +69,7 @@ void PropertiesPanel::connectSignals() {
     applyToShape();
   });
 
-  // Font
+  // font
   connect(fontCombo, &QFontComboBox::currentFontChanged, this,
           [this](const QFont&) { applyToShape(); });
   connect(fontSizeSpin, QOverload<int>::of(&QSpinBox::valueChanged), this,

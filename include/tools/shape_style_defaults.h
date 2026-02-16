@@ -1,4 +1,5 @@
-// shape_style_defaults.h — default fill/stroke presets for new shapes
+// shape_style_defaults.h
+// default fill/stroke presets for new shapes
 #pragma once
 
 #include <memory>
@@ -6,6 +7,7 @@
 
 class GraphicsObject;
 
+// struct to hold default properties for new shapes created by the user
 struct CreationDefaults {
   std::string fillColor;
   std::string strokeColor;
@@ -17,6 +19,8 @@ struct CreationDefaults {
   int fontSize;
 };
 
+// getter/setter for the global creation defaults
+// helper functions to apply them
 CreationDefaults getCreationDefaults();
 void setCreationDefaults(const CreationDefaults& defaults);
 std::string defaultShapeFillColor();

@@ -1,4 +1,5 @@
-// command.h — Command pattern for undo/redo
+// command.h
+// Command pattern for undo/redo
 #pragma once
 #include <QRectF>
 #include <memory>
@@ -14,7 +15,7 @@ class Command {
   virtual void redo(Canvas* canvas) = 0;
 };
 
-// Adding a shape (create / paste)
+// adding a shape to the canvas
 class AddShapeCommand : public Command {
  private:
   std::shared_ptr<GraphicsObject> shape;
@@ -25,7 +26,7 @@ class AddShapeCommand : public Command {
   void redo(Canvas* canvas) override;
 };
 
-// Removing a shape (delete / cut)
+// removing a shape by deleting or cutting from canvas
 class RemoveShapeCommand : public Command {
  private:
   std::shared_ptr<GraphicsObject> shape;
@@ -36,7 +37,7 @@ class RemoveShapeCommand : public Command {
   void redo(Canvas* canvas) override;
 };
 
-// Moving a shape by (dx, dy)
+// moving a shape by (dx, dy)
 class MoveCommand : public Command {
  private:
   std::shared_ptr<GraphicsObject> shape;
@@ -48,7 +49,7 @@ class MoveCommand : public Command {
   void redo(Canvas* canvas) override;
 };
 
-// Resizing a shape (stores old and new bounding boxes)
+// resizing a shape (stores old and new bounding boxes)
 class ResizeCommand : public Command {
  private:
   std::shared_ptr<GraphicsObject> shape;
@@ -61,7 +62,7 @@ class ResizeCommand : public Command {
   void redo(Canvas* canvas) override;
 };
 
-// Clearing all shapes (undoable)
+// clearing all shapes from the canvas (used for new and clear all)
 class ClearAllCommand : public Command {
  private:
   std::vector<std::shared_ptr<GraphicsObject>> saved;

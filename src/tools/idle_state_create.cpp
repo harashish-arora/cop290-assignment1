@@ -1,4 +1,6 @@
-// idle_state_create.cpp — Creates preview shapes for drawing modes
+// idle state create cpp
+// implementation for idle state create
+
 #include "gui/canvas.h"
 #include "shapes/circle.h"
 #include "shapes/freehand.h"
@@ -9,6 +11,8 @@
 #include "tools/creating_state.h"
 #include "tools/shape_style_defaults.h"
 
+// create preview shape based on current mode and creation defaults
+// actual commit happens on mouse release in creating state
 void startShapeCreation(Canvas* canvas, QPointF click) {
   auto defaults = getCreationDefaults();
   if (canvas->getMode() == ShapeMode::CIRCLE) {

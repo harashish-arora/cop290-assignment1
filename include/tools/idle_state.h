@@ -1,4 +1,5 @@
-// idle_state.h — State for when nothing is being dragged
+// idle_state.h
+// fsm state for when nothing is being dragged
 #pragma once
 #include "tools/canvas_state.h"
 

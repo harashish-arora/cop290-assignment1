@@ -1,5 +1,6 @@
-// properties_panel_refresh.cpp — Read shape state into panel, apply panel to
-// shape
+// properties panel refresh cpp
+// refresh controls from currently selected shape
+
 #include <QCheckBox>
 #include <QFontComboBox>
 #include <QPushButton>
@@ -10,6 +11,8 @@
 #include "gui/properties_panel.h"
 #include "gui/properties_panel_helpers.h"
 
+// pull selected shape state into ui controls
+// optional apply on click can push changes back to shape on selection change
 void PropertiesPanel::refreshFromSelection() {
   updating = true;
   auto shape = canvas->getSelectedShape();
@@ -21,6 +24,7 @@ void PropertiesPanel::refreshFromSelection() {
   if (shape) {
     bool allowAutoApply = !canvas->isHistoryReplayInProgress();
     if (allowAutoApply) {
+      // apply panel values immediately when apply on click is enabled
       auto before = captureShapeState(shape);
       auto after = before;
       if (fillApplyCheck->isChecked())
@@ -37,6 +41,7 @@ void PropertiesPanel::refreshFromSelection() {
       }
     }
 
+    // now mirror selected shape values into panel widgets
     auto state = captureShapeState(shape);
 
     QColor fc(QString::fromStdString(state.fillColor));
@@ -65,6 +70,7 @@ void PropertiesPanel::refreshFromSelection() {
   updating = false;
 }
 
+// apply current panel controls to selected shape and record undo command
 void PropertiesPanel::applyToShape() {
   if (updating) return;
   updatePreviews();

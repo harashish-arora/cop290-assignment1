@@ -1,20 +1,26 @@
-// freehand.cpp — Freehand sketch shape
+// freehand cpp
+// freehand polyline shape sequence of points
+
 #include "shapes/freehand.h"
 
 #include <QPainterPath>
 #include <algorithm>
 #include <cmath>
 
+// default freehand style is no fill black stroke width one
 Freehand::Freehand() {
   fillColor = "none";
   strokeColor = "black";
   strokeWidth = 1;
 }
 
+// append one sampled point to the polyline
 void Freehand::addPoint(double x, double y) { points.emplace_back(x, y); }
 
+// return immutable point list for drawing and resize logic
 const std::vector<QPointF>& Freehand::getPoints() const { return points; }
 
+// draw polyline path when at least two points exist
 void Freehand::draw(QPainter& painter) const {
   if (points.size() < 2) return;
   QPen pen(QColor(strokeColor.c_str()));
@@ -32,6 +38,7 @@ void Freehand::draw(QPainter& painter) const {
   painter.drawPath(path);
 }
 
+// compute tight bounding box around all points
 QRectF Freehand::boundingBox() const {
   if (points.empty()) return QRectF(0, 0, 0, 0);
   double minX = points[0].x(), maxX = minX;
@@ -45,8 +52,9 @@ QRectF Freehand::boundingBox() const {
   return QRectF(minX, minY, maxX - minX, maxY - minY);
 }
 
+// hit test by checking distance to every segment
 bool Freehand::contains(double x, double y) const {
-  // Check if (x,y) is close to any segment of the polyline
+  // check if x,y is close to any segment of the polyline
   const double tolerance = 6.0;
   for (size_t i = 1; i < points.size(); i++) {
     double x1 = points[i - 1].x(), y1 = points[i - 1].y();
@@ -62,6 +70,7 @@ bool Freehand::contains(double x, double y) const {
   return false;
 }
 
+// serialize polyline with freehand marker attribute
 std::string Freehand::toSVG() const {
   if (points.empty()) return "";
   std::string pts;

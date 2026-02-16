@@ -6,7 +6,9 @@
 
 #include "tools/command.h"
 
+// captures the properties of a shape relevant to the properties panel
 struct ShapePropertyState {
+  // common properties for all shapes
   std::string fillColor;
   std::string strokeColor;
   double strokeWidth = 1.0;
@@ -20,19 +22,25 @@ struct ShapePropertyState {
   bool hasTextContent = false;
   std::string textContent;
 
+  // equality operators for testing if properties have changed
   bool operator==(const ShapePropertyState& other) const;
   bool operator!=(const ShapePropertyState& other) const;
 };
 
+// command to change shape properties with undo/redo support
 class ShapePropertyCommand : public Command {
+  // stores the shape being modified and its before/after property states
  private:
   std::shared_ptr<GraphicsObject> shape;
   ShapePropertyState before;
   ShapePropertyState after;
 
+  // helper to apply a property state to a shape
   void applyState(const ShapePropertyState& state, Canvas* canvas);
 
+  // helper to capture the current properties of a shape into a state struct
  public:
+  // constructor takes the shape being modified and the before/after states
   ShapePropertyCommand(std::shared_ptr<GraphicsObject> shape,
                        ShapePropertyState before, ShapePropertyState after);
   void undo(Canvas* canvas) override;

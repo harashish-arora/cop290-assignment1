@@ -1,4 +1,6 @@
-// main_window.cpp — Constructor, close, title update
+// main window cpp
+// this defines the top level window along with the menu bar
+
 #include "gui/main_window.h"
 
 #include <QFileInfo>
@@ -10,6 +12,7 @@
 #include "gui/tool_bar.h"
 #include "gui/unsaved_changes_dialog.h"
 
+// build main window layout and wire cross widget signals
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   auto* container = new QWidget(this);
   auto* outerLayout = new QHBoxLayout(container);
@@ -41,8 +44,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
           &MainWindow::updateWindowTitle);
 }
 
+// expose canvas pointer for tests and integration points
 Canvas* MainWindow::getCanvas() const { return canvas; }
 
+// close action with unsaved changes prompt
 void MainWindow::closeFile() {
   if (canvas->isModified()) {
     auto choice =
@@ -53,6 +58,7 @@ void MainWindow::closeFile() {
   close();
 }
 
+// keep title synced with current file and modified flag
 void MainWindow::updateWindowTitle() {
   QString title = "ProjectInkscape";
   QString path = canvas->getFilePath();

@@ -1,9 +1,13 @@
+// text shape cpp
+// textshape represents a single line text object with font properties
+
 #include "shapes/text_shape.h"
 
 #include <QFont>
 #include <QFontMetricsF>
 #include <QPainterPath>
 
+// constructor sets initial text highlight and stroke defaults
 TextShape::TextShape(double x, double y, const std::string& text)
     : x(x), y(y), text(text) {
   fillColor = "#280078d4";
@@ -11,11 +15,12 @@ TextShape::TextShape(double x, double y, const std::string& text)
   strokeWidth = 1.0;
 }
 
+// draw text background highlight then glyph path using stroke color
 void TextShape::draw(QPainter& painter) const {
   QFont f(QString::fromStdString(fontFamily), fontSize);
   painter.setFont(f);
 
-  // Persistent background highlight from fill color
+  // persistent background highlight from fill color
   QColor bg(fillColor.c_str());
   if (bg.isValid() && fillColor != "transparent" && fillColor != "none") {
     painter.setPen(Qt::NoPen);
@@ -43,6 +48,7 @@ void TextShape::draw(QPainter& painter) const {
   }
 }
 
+// compute text bounding box from current font metrics
 QRectF TextShape::boundingBox() const {
   QFont f(QString::fromStdString(fontFamily), fontSize);
   QFontMetricsF fm(f);
@@ -53,10 +59,12 @@ QRectF TextShape::boundingBox() const {
   return QRectF(x, y - fm.ascent(), w, h);
 }
 
+// hit test based on bounding box
 bool TextShape::contains(double px, double py) const {
   return boundingBox().contains(px, py);
 }
 
+// escape xml special characters for valid svg output
 std::string TextShape::escapeXml(const std::string& s) {
   std::string out;
   out.reserve(s.size());
@@ -85,6 +93,7 @@ std::string TextShape::escapeXml(const std::string& s) {
   return out;
 }
 
+// serialize text with font properties and highlight metadata
 std::string TextShape::toSVG() const {
   return "<text data-shape=\"text\" x=\"" + std::to_string(x) + "\" y=\"" +
          std::to_string(y) + "\" font-family=\"" + escapeXml(fontFamily) +

@@ -1,4 +1,6 @@
-// resizing_state_apply.cpp — Applies handle drag to shape geometry
+// resizing state apply cpp
+// implementation for resizing state apply
+
 #include <algorithm>
 #include <cmath>
 
@@ -10,11 +12,13 @@
 #include "shapes/rounded_rectangle.h"
 #include "tools/resizing_state.h"
 
+// apply active resize handle movement to selected shape geometry
 void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
   auto& selected = canvas->getSelectedShape();
   double left = anchorLeft, top = anchorTop;
   double right = anchorRight, bottom = anchorBottom;
 
+  // update dragged edges based on active handle
   switch (activeHandle) {
     case HandleType::TOP_LEFT:
       left = pos.x();
@@ -48,11 +52,13 @@ void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
       break;
   }
 
+  // normalize to positive width and height
   double newX = std::min(left, right);
   double newY = std::min(top, bottom);
   double newW = std::abs(right - left);
   double newH = std::abs(bottom - top);
 
+  // apply resized box to each supported shape type
   auto rect = std::dynamic_pointer_cast<Rectangle>(selected);
   if (rect) {
     QRectF box = selected->boundingBox();
@@ -73,12 +79,14 @@ void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
     circle->setRadii(newW / 2.0, newH / 2.0);
   }
 
+  // keep hex orientation and only update center and radii
   auto hex = std::dynamic_pointer_cast<Hexagon>(selected);
   if (hex) {
     hex->setCenter(newX + newW / 2.0, newY + newH / 2.0);
     hex->setRadii(newW / 2.0, newH / 2.0);
   }
 
+  // freehand is remapped by relative point coordinates
   auto fh = std::dynamic_pointer_cast<Freehand>(selected);
   if (fh && !origFreehandPts.empty() && origFreehandBox.width() > 0.5 &&
       origFreehandBox.height() > 0.5) {
@@ -93,6 +101,7 @@ void ResizingState::applyResize(Canvas* canvas, QPointF pos) {
     }
   }
 
+  // store last mouse position for state bookkeeping and repaint
   canvas->setLastMousePos(pos);
   canvas->update();
 }
