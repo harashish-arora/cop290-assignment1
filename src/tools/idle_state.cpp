@@ -7,6 +7,7 @@
 #include "tools/handle_helpers.h"
 #include "tools/moving_state.h"
 #include "tools/resizing_state.h"
+#include "tools/shape_style_defaults.h"
 
 // Defined in idle_state_create.cpp
 void startShapeCreation(Canvas* canvas, QPointF click);
@@ -44,8 +45,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
 
   if (canvas->getMode() == ShapeMode::TEXT) {
     auto txt = std::make_shared<TextShape>(click.x(), click.y(), "");
-    txt->setFillColor("#80ffffff");
-    txt->setStrokeColor("#ff000000");
+    applyDefaultShapeStyle(txt);
     canvas->getShapes().push_back(txt);
     canvas->setSelectedShape(txt);
     canvas->setTextDraftShape(txt);

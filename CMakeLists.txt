@@ -20,6 +20,7 @@ add_executable(ProjectInkscape
     src/gui/canvas_history.cpp
     src/gui/canvas_text.cpp
     src/gui/canvas_file.cpp
+    src/gui/unsaved_changes_dialog.cpp
     src/gui/main_window.cpp
     src/gui/main_window_menus.cpp
     src/gui/properties_panel.cpp
@@ -61,7 +62,9 @@ add_executable(ProjectInkscape
     include/gui/properties_panel_helpers.h
     include/gui/shape_mode.h
     include/gui/app_style.h
+    include/gui/unsaved_changes_dialog.h
     include/tools/shape_property_command.h
+    include/tools/shape_style_defaults.h
     include/parse/svg_parser_internal.h
 )
 

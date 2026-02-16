@@ -75,7 +75,6 @@ class Canvas : public QWidget {
   QString currentFilePath;
   bool dirty = false;
   int currentStateId = 0;
-  int savedStateId = 0;
   int nextStateId = 1;
   bool historyReplayInProgress = false;
   bool textEditing = false;

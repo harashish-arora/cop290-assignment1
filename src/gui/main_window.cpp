@@ -3,12 +3,12 @@
 
 #include <QFileInfo>
 #include <QHBoxLayout>
-#include <QMessageBox>
 #include <QVBoxLayout>
 
 #include "gui/canvas.h"
 #include "gui/properties_panel.h"
 #include "gui/tool_bar.h"
+#include "gui/unsaved_changes_dialog.h"
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
   auto* container = new QWidget(this);
@@ -45,18 +45,10 @@ Canvas* MainWindow::getCanvas() const { return canvas; }
 
 void MainWindow::closeFile() {
   if (canvas->isModified()) {
-    QMessageBox box(this);
-    box.setIcon(QMessageBox::NoIcon);
-    box.setWindowTitle("Unsaved Changes");
-    box.setText("You have unsaved changes. Save before closing?");
-    auto* saveBtn = box.addButton("Save", QMessageBox::AcceptRole);
-    box.addButton("Don't Save", QMessageBox::DestructiveRole);
-    auto* cancelBtn = box.addButton("Cancel", QMessageBox::RejectRole);
-    box.setDefaultButton(cancelBtn);
-    box.exec();
-    auto* clicked = box.clickedButton();
-    if (!clicked || clicked == cancelBtn) return;
-    if (clicked == saveBtn) canvas->save();
+    auto choice =
+        promptUnsavedChanges(this, "You have unsaved changes. Save before closing?");
+    if (choice == UnsavedChoice::Cancel) return;
+    if (choice == UnsavedChoice::Save) canvas->save();
   }
   close();
 }
