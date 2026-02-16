@@ -187,7 +187,7 @@ All shapes inherit from the `GraphicsObject` abstract base class, which defines 
 - **GUI Framework**: Qt6 (Widgets module)
 - **Build System**: CMake 3.16+
 - **File Format**: SVG (Scalable Vector Graphics)
-- **Code Organization**: Modular architecture with under 100 lines per file
+- **Code Organization**: Modular architecture with under 100 lines per file. All code follows Google C++ Style Guide.
 
 ## Development
 
