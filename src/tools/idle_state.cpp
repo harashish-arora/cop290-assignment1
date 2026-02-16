@@ -37,6 +37,7 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
     if ((*it)->contains(click.x(), click.y())) {
       canvas->setSelectedShape(*it);
       canvas->endTextEditing();
+      canvas->setCursor(Qt::ClosedHandCursor);
       canvas->setState(std::make_unique<MovingState>());
       canvas->update();
       return;
@@ -66,13 +67,23 @@ void IdleState::handleMousePress(Canvas* canvas, QMouseEvent* event) {
 }
 
 void IdleState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
+  QPointF pos = event->position();
   auto& selected = canvas->getSelectedShape();
   if (selected) {
-    HandleType hover = getHandleAt(event->position(), selected);
-    updateCursorForHandle(canvas, hover);
-  } else {
-    canvas->setCursor(Qt::ArrowCursor);
+    HandleType hover = getHandleAt(pos, selected);
+    if (hover != HandleType::NONE) {
+      updateCursorForHandle(canvas, hover);
+      return;
+    }
   }
+  auto& shapes = canvas->getShapes();
+  for (auto it = shapes.rbegin(); it != shapes.rend(); ++it) {
+    if ((*it)->contains(pos.x(), pos.y())) {
+      canvas->setCursor(Qt::SizeAllCursor);
+      return;
+    }
+  }
+  canvas->setCursor(Qt::ArrowCursor);
 }
 
 void IdleState::handleMouseRelease(Canvas*, QMouseEvent*) {}

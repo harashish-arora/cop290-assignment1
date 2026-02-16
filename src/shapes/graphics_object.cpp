@@ -13,6 +13,8 @@ GraphicsObject::GraphicsObject()
       fillColor("green"),
       strokeColor("black") {}
 
+GraphicsObject::~GraphicsObject() = default;
+
 // strokeColor
 void GraphicsObject::setStrokeColor(const std::string& color) {
   strokeColor = color;

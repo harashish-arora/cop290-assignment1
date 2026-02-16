@@ -19,7 +19,7 @@ class Canvas : public QWidget {
   };
  public:
   explicit Canvas(QWidget* parent = nullptr);
-  virtual ~Canvas() = default;
+  virtual ~Canvas();
   void setState(std::unique_ptr<CanvasState> newState);
   std::vector<std::shared_ptr<GraphicsObject>>& getShapes();
   std::shared_ptr<GraphicsObject>& getSelectedShape();

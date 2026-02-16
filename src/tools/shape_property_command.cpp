@@ -6,6 +6,22 @@
 #include "shapes/rounded_rectangle.h"
 #include "shapes/text_shape.h"
 
+bool ShapePropertyState::operator==(const ShapePropertyState& other) const {
+  return fillColor == other.fillColor && strokeColor == other.strokeColor &&
+         strokeWidth == other.strokeWidth &&
+         hasCornerRadius == other.hasCornerRadius &&
+         cornerRadius == other.cornerRadius &&
+         hasPointyTop == other.hasPointyTop && pointyTop == other.pointyTop &&
+         hasTextStyle == other.hasTextStyle &&
+         fontFamily == other.fontFamily && fontSize == other.fontSize &&
+         hasTextContent == other.hasTextContent &&
+         textContent == other.textContent;
+}
+
+bool ShapePropertyState::operator!=(const ShapePropertyState& other) const {
+  return !(*this == other);
+}
+
 ShapePropertyCommand::ShapePropertyCommand(std::shared_ptr<GraphicsObject> shape,
                                            ShapePropertyState before,
                                            ShapePropertyState after)

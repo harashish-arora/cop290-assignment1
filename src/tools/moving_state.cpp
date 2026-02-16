@@ -12,6 +12,7 @@ void MovingState::handleMouseMove(Canvas* canvas, QMouseEvent* event) {
 
   auto& selected = canvas->getSelectedShape();
   if (!selected) return;
+  canvas->setCursor(Qt::ClosedHandCursor);
 
   QPointF current = event->position();
   QPointF last = canvas->getLastMousePos();
@@ -31,6 +32,7 @@ void MovingState::handleMouseRelease(Canvas* canvas, QMouseEvent* event) {
   auto& sel = canvas->getSelectedShape();
   if (sel && (totalDx != 0 || totalDy != 0))
     canvas->pushCommand(std::make_unique<MoveCommand>(sel, totalDx, totalDy));
+  canvas->setCursor(sel ? Qt::SizeAllCursor : Qt::ArrowCursor);
   canvas->setState(std::make_unique<IdleState>());
   canvas->update();
 }

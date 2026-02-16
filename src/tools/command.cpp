@@ -6,6 +6,8 @@
 #include "gui/canvas.h"
 #include "shapes/graphics_object.h"
 
+Command::~Command() = default;
+
 // --- AddShapeCommand ---
 AddShapeCommand::AddShapeCommand(std::shared_ptr<GraphicsObject> s)
     : shape(std::move(s)) {}

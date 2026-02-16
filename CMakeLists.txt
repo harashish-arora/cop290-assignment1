@@ -44,6 +44,7 @@ add_executable(ProjectInkscape
     src/shapes/text_shape_ops.cpp
     src/tools/handle_helpers.cpp
     src/tools/handle_helpers_draw.cpp
+    src/tools/canvas_state.cpp
     src/tools/idle_state.cpp
     src/tools/idle_state_create.cpp
     src/tools/creating_state.cpp
@@ -52,6 +53,7 @@ add_executable(ProjectInkscape
     src/tools/resizing_state_apply.cpp
     src/tools/command.cpp
     src/tools/shape_property_command.cpp
+    src/tools/shape_style_defaults.cpp
     src/parse/svg_parser.cpp
     src/parse/svg_parser_utils.cpp
     src/parse/svg_parser_shapes.cpp

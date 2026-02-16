@@ -29,6 +29,8 @@ Canvas::Canvas(QWidget* parent) : QWidget(parent) {
           [this]() { finalizeTextEditing(); });
 }
 
+Canvas::~Canvas() = default;
+
 void Canvas::mousePressEvent(QMouseEvent* e) {
   if (textEditing) finalizeTextEditing();
   currentState->handleMousePress(this, e);

@@ -18,7 +18,7 @@ class GraphicsObject {
   // the GraphicsObject pointer
   GraphicsObject();
 
-  virtual ~GraphicsObject() = default;
+  virtual ~GraphicsObject();
 
   // the virtual functions for drawing, converting to SVG, and whether the
   // selection contains my mouse (for editing later on)

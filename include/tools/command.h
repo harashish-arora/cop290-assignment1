@@ -9,7 +9,7 @@ class GraphicsObject;
 
 class Command {
  public:
-  virtual ~Command() = default;
+  virtual ~Command();
   virtual void undo(Canvas* canvas) = 0;
   virtual void redo(Canvas* canvas) = 0;
 };

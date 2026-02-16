@@ -20,20 +20,8 @@ struct ShapePropertyState {
   bool hasTextContent = false;
   std::string textContent;
 
-  bool operator==(const ShapePropertyState& other) const {
-    return fillColor == other.fillColor && strokeColor == other.strokeColor &&
-           strokeWidth == other.strokeWidth &&
-           hasCornerRadius == other.hasCornerRadius &&
-           cornerRadius == other.cornerRadius &&
-           hasPointyTop == other.hasPointyTop && pointyTop == other.pointyTop &&
-           hasTextStyle == other.hasTextStyle &&
-           fontFamily == other.fontFamily && fontSize == other.fontSize &&
-           hasTextContent == other.hasTextContent &&
-           textContent == other.textContent;
-  }
-  bool operator!=(const ShapePropertyState& other) const {
-    return !(*this == other);
-  }
+  bool operator==(const ShapePropertyState& other) const;
+  bool operator!=(const ShapePropertyState& other) const;
 };
 
 class ShapePropertyCommand : public Command {
