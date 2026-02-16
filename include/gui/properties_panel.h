@@ -1,15 +1,18 @@
-// properties_panel.h — Color/stroke properties editor (horizontal layout)
+// properties_panel.h — Dual fill/stroke properties editor with color picker
 #pragma once
+#include <QColor>
 #include <QWidget>
 #include <memory>
+
 class QSlider;
 class QSpinBox;
 class QPushButton;
 class QLabel;
+class QCheckBox;
 class QFontComboBox;
+class QHBoxLayout;
 class Canvas;
 class GraphicsObject;
-class QGridLayout;
 
 class PropertiesPanel : public QWidget {
   Q_OBJECT
@@ -21,36 +24,44 @@ class PropertiesPanel : public QWidget {
 
  private slots:
   void applyToShape();
-  void onPresetClicked();
+  void onFillPresetClicked();
+  void onStrokePresetClicked();
+  void onFillPreviewClicked();
+  void onStrokePreviewClicked();
 
  private:
   Canvas* canvas;
   bool updating = false;
-  QPushButton* fillBtn;
-  QPushButton* strokeBtn;
-  QSlider *rSlider, *gSlider, *bSlider, *alphaSlider, *widthSlider;
-  QSpinBox *rSpin, *gSpin, *bSpin, *alphaSpin, *widthSpin;
-  QWidget* preview;
-  QLabel* widthLabel;
 
-  // Shape-specific section (right side)
-  QWidget* shapeSection;
-  // Rounded rectangle controls
-  QLabel* cornerLabel;
+  // Tracked base RGB (alpha lives in the sliders)
+  QColor fillRgb_{255, 255, 255};
+  QColor strokeRgb_{0, 0, 0};
+
+  // Fill section
+  QPushButton* fillPreview;
+  QSlider* fillAlphaSlider;
+  QSpinBox* fillAlphaSpin;
+  QCheckBox* fillApplyCheck;
+
+  // Stroke section
+  QPushButton* strokePreview;
+  QSlider* strokeAlphaSlider;
+  QSpinBox* strokeAlphaSpin;
+  QSlider* widthSlider;
+  QSpinBox* widthSpin;
+  QCheckBox* strokeApplyCheck;
+
+  // Shape-specific controls (always visible in grid)
   QSlider* cornerSlider;
   QSpinBox* cornerSpin;
-  // Hexagon controls
   QPushButton* flatTopBtn;
   QPushButton* pointyTopBtn;
-  // Text controls
-  QLabel* fontLabel;
   QFontComboBox* fontCombo;
-  QLabel* fontSizeLabel;
   QSpinBox* fontSizeSpin;
 
-  QGridLayout* sliderGrid;
-
-  bool isStrokeMode() const;
-  QColor currentColor() const;
-  void updateDisplay();
+  QColor getEffectiveFill() const;
+  QColor getEffectiveStroke() const;
+  void updatePreviews();
+  void setupGrid(QHBoxLayout* mainRow);
+  void connectSignals();
 };

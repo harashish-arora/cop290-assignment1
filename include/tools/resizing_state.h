@@ -18,6 +18,9 @@ class ResizingState : public CanvasState {
   // Call after construction to snapshot freehand points
   void snapshotFreehandPoints(const std::vector<QPointF>& pts);
 
+  // Apply non-line resize (defined in resizing_state_apply.cpp)
+  void applyResize(Canvas* canvas, QPointF pos);
+
  private:
   HandleType activeHandle;
 

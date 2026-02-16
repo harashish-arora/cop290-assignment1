@@ -12,6 +12,7 @@ class ToolBar : public QWidget {
 
  private:
   Canvas* canvas;
+  QPushButton* selectBtn;
   QPushButton* rectBtn;
   QPushButton* circleBtn;
   QPushButton* hexBtn;
@@ -20,4 +21,5 @@ class ToolBar : public QWidget {
   QPushButton* freehandBtn;
   QPushButton* textBtn;
   void updateHighlight();
+  void createButtons(const QSize& iconSz);
 };

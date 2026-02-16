@@ -1,9 +1,8 @@
-// main_window.cpp — MainWindow with File and Edit menus
+// main_window.cpp — Constructor, close, title update
 #include "gui/main_window.h"
 
 #include <QFileInfo>
 #include <QHBoxLayout>
-#include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
 
@@ -38,72 +37,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
   connect(canvas, &Canvas::selectionChanged, panel,
           &PropertiesPanel::refreshFromSelection);
-
   connect(canvas, &Canvas::modifiedChanged, this,
           &MainWindow::updateWindowTitle);
 }
 
 Canvas* MainWindow::getCanvas() const { return canvas; }
-
-void MainWindow::createMenus() {
-  // --- File menu ---
-  QMenu* fileMenu = menuBar()->addMenu("&File");
-
-  QAction* newAction = fileMenu->addAction("New");
-  newAction->setShortcut(QKeySequence::New);  // Cmd+N / Ctrl+N
-  connect(newAction, &QAction::triggered, canvas, &Canvas::newFile);
-
-  QAction* openAction = fileMenu->addAction("Open...");
-  openAction->setShortcut(QKeySequence::Open);  // Cmd+O / Ctrl+O
-  connect(openAction, &QAction::triggered, canvas, &Canvas::openFile);
-
-  fileMenu->addSeparator();
-
-  QAction* saveAction = fileMenu->addAction("Save");
-  saveAction->setShortcut(QKeySequence::Save);  // Cmd+S / Ctrl+S
-  connect(saveAction, &QAction::triggered, canvas, &Canvas::save);
-
-  QAction* saveAsAction = fileMenu->addAction("Save As...");
-  saveAsAction->setShortcut(
-      QKeySequence::SaveAs);  // Cmd+Shift+S / Ctrl+Shift+S
-  connect(saveAsAction, &QAction::triggered, canvas, &Canvas::saveAs);
-
-  fileMenu->addSeparator();
-
-  QAction* closeAction = fileMenu->addAction("Close");
-  closeAction->setShortcut(QKeySequence::Close);  // Cmd+W / Ctrl+W
-  connect(closeAction, &QAction::triggered, this, &MainWindow::closeFile);
-
-  // --- Edit menu ---
-  QMenu* editMenu = menuBar()->addMenu("&Edit");
-
-  QAction* undoAction = editMenu->addAction("Undo");
-  undoAction->setShortcut(QKeySequence::Undo);  // Ctrl+Z / Cmd+Z
-  connect(undoAction, &QAction::triggered, canvas, &Canvas::undo);
-
-  QAction* redoAction = editMenu->addAction("Redo");
-  redoAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Y));  // Cmd+Y
-  connect(redoAction, &QAction::triggered, canvas, &Canvas::redo);
-
-  editMenu->addSeparator();
-
-  QAction* cutAction = editMenu->addAction("Cut");
-  cutAction->setShortcut(QKeySequence::Cut);
-  connect(cutAction, &QAction::triggered, canvas, &Canvas::cutSelected);
-
-  QAction* copyAction = editMenu->addAction("Copy");
-  copyAction->setShortcut(QKeySequence::Copy);
-  connect(copyAction, &QAction::triggered, canvas, &Canvas::copySelected);
-
-  QAction* pasteAction = editMenu->addAction("Paste");
-  pasteAction->setShortcut(QKeySequence::Paste);
-  connect(pasteAction, &QAction::triggered, canvas, &Canvas::pasteAtCursor);
-
-  editMenu->addSeparator();
-
-  QAction* clearAction = editMenu->addAction("Clear All");
-  connect(clearAction, &QAction::triggered, canvas, &Canvas::clearAll);
-}
 
 void MainWindow::closeFile() {
   if (canvas->isModified()) {
