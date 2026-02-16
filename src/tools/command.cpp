@@ -5,9 +5,6 @@
 
 #include "gui/canvas.h"
 #include "shapes/graphics_object.h"
-#include "shapes/hexagon.h"
-#include "shapes/rounded_rectangle.h"
-#include "shapes/text_shape.h"
 
 // --- AddShapeCommand ---
 AddShapeCommand::AddShapeCommand(std::shared_ptr<GraphicsObject> s)
@@ -72,48 +69,6 @@ void ResizeCommand::undo(Canvas* c) {
   shape->setFromBoundingBox(oldBox);
   c->update();
 }
-
-// --- ShapePropertyCommand ---
-ShapePropertyCommand::ShapePropertyCommand(std::shared_ptr<GraphicsObject> shape,
-                                           ShapePropertyState before,
-                                           ShapePropertyState after)
-    : shape(std::move(shape)), before(std::move(before)), after(std::move(after)) {}
-
-void ShapePropertyCommand::applyState(const ShapePropertyState& state,
-                                      Canvas* canvas) {
-  if (!shape) return;
-
-  shape->setFillColor(state.fillColor);
-  shape->setStrokeColor(state.strokeColor);
-  shape->setStrokeWidth(state.strokeWidth);
-
-  if (state.hasCornerRadius) {
-    if (auto rr = std::dynamic_pointer_cast<RoundedRectangle>(shape))
-      rr->setCornerRadius(state.cornerRadius);
-  }
-
-  if (state.hasPointyTop) {
-    if (auto hex = std::dynamic_pointer_cast<Hexagon>(shape))
-      hex->setPointyTop(state.pointyTop);
-  }
-
-  if (state.hasTextStyle) {
-    if (auto text = std::dynamic_pointer_cast<TextShape>(shape)) {
-      text->setFontFamily(state.fontFamily);
-      text->setFontSize(state.fontSize);
-    }
-  }
-  if (state.hasTextContent) {
-    if (auto text = std::dynamic_pointer_cast<TextShape>(shape))
-      text->setText(state.textContent);
-  }
-
-  canvas->update();
-}
-
-void ShapePropertyCommand::undo(Canvas* canvas) { applyState(before, canvas); }
-
-void ShapePropertyCommand::redo(Canvas* canvas) { applyState(after, canvas); }
 
 // --- ClearAllCommand ---
 ClearAllCommand::ClearAllCommand(

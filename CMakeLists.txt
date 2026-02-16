@@ -14,8 +14,11 @@ add_executable(ProjectInkscape
     src/shapes/graphics_object.cpp
     src/shapes/rectangle.cpp
     src/gui/canvas.cpp
+    src/gui/canvas_paint.cpp
     src/gui/canvas_events.cpp
     src/gui/canvas_clipboard.cpp
+    src/gui/canvas_history.cpp
+    src/gui/canvas_text.cpp
     src/gui/canvas_file.cpp
     src/gui/main_window.cpp
     src/gui/main_window_menus.cpp
@@ -23,6 +26,7 @@ add_executable(ProjectInkscape
     src/gui/properties_panel_helpers.cpp
     src/gui/properties_panel_grid.cpp
     src/gui/properties_panel_connect.cpp
+    src/gui/properties_panel_state.cpp
     src/gui/properties_panel_refresh.cpp
     src/gui/properties_panel_dialogs.cpp
     src/gui/tool_bar.cpp
@@ -46,6 +50,7 @@ add_executable(ProjectInkscape
     src/tools/resizing_state.cpp
     src/tools/resizing_state_apply.cpp
     src/tools/command.cpp
+    src/tools/shape_property_command.cpp
     src/parse/svg_parser.cpp
     src/parse/svg_parser_utils.cpp
     src/parse/svg_parser_shapes.cpp
@@ -56,6 +61,7 @@ add_executable(ProjectInkscape
     include/gui/properties_panel_helpers.h
     include/gui/shape_mode.h
     include/gui/app_style.h
+    include/tools/shape_property_command.h
     include/parse/svg_parser_internal.h
 )
 

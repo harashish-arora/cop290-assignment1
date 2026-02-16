@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <memory>
 
-#include "tools/command.h"
+#include "tools/shape_property_command.h"
 
 class QSlider;
 class QSpinBox;
